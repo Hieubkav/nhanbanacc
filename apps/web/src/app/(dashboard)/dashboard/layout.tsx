@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import DashboardSidebar from "@/components/admin/DashboardSidebar";
 import { Menu } from "lucide-react";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -18,7 +19,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Menu className="size-4" />
           </Button>
           <div className="text-sm font-medium">Dashboard</div>
-          <div className="size-9" />
+          <ModeToggle />
         </div>
       </div>
 
@@ -39,7 +40,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         )}
 
         {/* Main content */}
-        <main className="p-3 md:p-6">{children}</main>
+        <main className="p-3 md:p-6">
+          <div className="hidden md:flex items-center justify-end mb-4">
+            <ModeToggle />
+          </div>
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const coreNav = [
   { href: "/dashboard", label: "Tổng quan", icon: LayoutDashboard },
