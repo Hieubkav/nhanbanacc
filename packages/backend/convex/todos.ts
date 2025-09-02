@@ -14,6 +14,7 @@ export const create = mutation({
 	handler: async (ctx, args) => {
 		const newTodoId = await ctx.db.insert("todos", {
 			text: args.text,
+			note: args.text,
 			completed: false,
 		});
 		return await ctx.db.get(newTodoId);
