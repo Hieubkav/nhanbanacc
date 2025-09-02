@@ -13,11 +13,25 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as categories from "../categories.js";
+import type * as customers from "../customers.js";
+import type * as faqs from "../faqs.js";
 import type * as healthCheck from "../healthCheck.js";
 import type * as hello from "../hello.js";
+import type * as images from "../images.js";
+import type * as lib_crud from "../lib/crud.js";
+import type * as post_images from "../post_images.js";
+import type * as posts from "../posts.js";
 import type * as privateData from "../privateData.js";
+import type * as product_images from "../product_images.js";
+import type * as product_variants from "../product_variants.js";
+import type * as products from "../products.js";
+import type * as reviews from "../reviews.js";
+import type * as settings from "../settings.js";
+import type * as sliders from "../sliders.js";
 import type * as student from "../student.js";
 import type * as todos from "../todos.js";
+import type * as users from "../users.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -28,11 +42,25 @@ import type * as todos from "../todos.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  categories: typeof categories;
+  customers: typeof customers;
+  faqs: typeof faqs;
   healthCheck: typeof healthCheck;
   hello: typeof hello;
+  images: typeof images;
+  "lib/crud": typeof lib_crud;
+  post_images: typeof post_images;
+  posts: typeof posts;
   privateData: typeof privateData;
+  product_images: typeof product_images;
+  product_variants: typeof product_variants;
+  products: typeof products;
+  reviews: typeof reviews;
+  settings: typeof settings;
+  sliders: typeof sliders;
   student: typeof student;
   todos: typeof todos;
+  users: typeof users;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
