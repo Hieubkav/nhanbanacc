@@ -193,7 +193,7 @@ export default function ProductVariantsPanel({ productId }: { productId: string 
                         </>
                       ) : (
                         <>
-                          <Button size="sm" variant="outline" onClick={() => setEditingId(String(row._id)) || startEdit(row)}>Sửa</Button>
+                          <Button size="sm" variant="outline" onClick={() => { setEditingId(String(row._id)); startEdit(row); }}>Sửa</Button>
                           <Button size="sm" variant="secondary" onClick={() => setDefault({ id: row._id as any } as any)}>Đặt mặc định</Button>
                           <Button size="sm" variant="outline" onClick={() => toggle({ id: row._id as any, field: "isVisible" } as any)}>{row.isVisible ? "Ẩn" : "Hiện"}</Button>
                           <Button size="sm" variant="destructive" onClick={() => remove({ id: row._id as any } as any)}>Xoá</Button>
@@ -210,4 +210,5 @@ export default function ProductVariantsPanel({ productId }: { productId: string 
     </div>
   );
 }
+
 
