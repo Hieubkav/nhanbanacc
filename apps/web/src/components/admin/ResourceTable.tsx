@@ -82,11 +82,26 @@ export default function ResourceTable({ resource }: Props) {
                   ))}
                   <td className="p-3 text-right">
                     <div className="flex justify-end gap-2">
-                      {config.toggles?.map((f) => (
-                        <Button key={f} size="sm" variant={row[f] ? "secondary" : "outline"} onClick={() => toggle({ id: row._id, field: f })}>
-                          {f}:{String(row[f])}
-                        </Button>
-                      ))}
+                      {config.toggles?.map((f) => {
+                        const fieldLabel =
+                          config.listColumns.find((c) => c.key === f)?.label ||
+                          config.editFields?.find((c: any) => c.name === f)?.label ||
+                          config.createFields.find((c: any) => c.name === f)?.label ||
+                          f;
+                        const val = !!row[f];
+                        const isHienThi = typeof fieldLabel === "string" && fieldLabel.toLowerCase().includes("hiển");
+                        const stateText = isHienThi ? (val ? "Hiện" : "Ẩn") : (val ? "Bật" : "Tắt");
+                        return (
+                          <Button
+                            key={f}
+                            size="sm"
+                            variant={val ? "secondary" : "outline"}
+                            onClick={() => toggle({ id: row._id, field: f })}
+                          >
+                            {fieldLabel}: {stateText}
+                          </Button>
+                        );
+                      })}
                       <Link href={`/dashboard/resources/${resource}/${row._id}`}><Button size="sm" variant="outline">Sửa</Button></Link>
                       <Button size="sm" variant="destructive" onClick={() => del({ id: row._id })}>Xóa</Button>
                     </div>
@@ -118,4 +133,3 @@ function renderCell(val: any) {
   if (typeof val === "object" && "id" in val && "label" in val) return (val as any).label;
   return JSON.stringify(val);
 }
-

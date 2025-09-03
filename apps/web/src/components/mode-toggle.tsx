@@ -13,6 +13,18 @@ import {
 
 export function ModeToggle() {
 	const { setTheme } = useTheme();
+	const [mounted, setMounted] = React.useState(false);
+	React.useEffect(() => setMounted(true), []);
+
+	// Tránh mismatch: trong SSR và lần render đầu trên client đều trả về cùng markup
+	if (!mounted) {
+		return (
+			<Button variant="outline" size="icon" aria-hidden>
+				<Sun className="h-[1.2rem] w-[1.2rem] opacity-0" />
+				<span className="sr-only">Toggle theme</span>
+			</Button>
+		);
+	}
 
 	return (
 		<DropdownMenu>

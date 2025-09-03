@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import DashboardSidebar from "@/components/admin/DashboardSidebar";
 import { Menu } from "lucide-react";
-import { ModeToggle } from "@/components/mode-toggle";
+import dynamic from "next/dynamic";
+const ModeToggle = dynamic(() => import("@/components/mode-toggle").then(m => m.ModeToggle), { ssr: false });
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
