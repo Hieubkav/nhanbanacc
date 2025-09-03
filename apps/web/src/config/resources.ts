@@ -13,13 +13,14 @@ export type FieldType =
   | "fk";
 
 export type FieldConfig = {
-  name: string;
-  label: string;
-  type: FieldType;
-  placeholder?: string;
-  required?: boolean;
-  options?: { label: string; value: string }[]; // for select
-  fk?: { resource: string; labelFields?: string[] };
+	name: string;
+	label: string;
+	type: FieldType;
+	placeholder?: string;
+	required?: boolean;
+	help?: string;
+	options?: { label: string; value: string }[]; // for select
+	fk?: { resource: string; labelFields?: string[] };
 };
 
 export type ResourceConfig = {

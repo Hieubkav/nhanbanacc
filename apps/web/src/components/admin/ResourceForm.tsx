@@ -12,6 +12,91 @@ import { useRouter } from "next/navigation";
 import { ImagePreviewThumb } from "./ImagePreviewThumb";
 import RichTextEditor from "./RichTextEditor";
 
+const SETTINGS_SELECTS: Record<string, { label: string; value: string }[]> = {
+  type: [
+    { label: "string", value: "string" },
+    { label: "number", value: "number" },
+    { label: "boolean", value: "boolean" },
+    { label: "json", value: "json" },
+    { label: "url", value: "url" },
+    { label: "email", value: "email" },
+    { label: "phone", value: "phone" },
+    { label: "color", value: "color" },
+    { label: "imageId", value: "imageId" },
+    { label: "richtext", value: "richtext" },
+  ],
+  group: [
+    { label: "site", value: "site" },
+    { label: "seo", value: "seo" },
+    { label: "social", value: "social" },
+    { label: "ui", value: "ui" },
+    { label: "feature", value: "feature" },
+    { label: "contact", value: "contact" },
+  ],
+};
+
+const SETTINGS_HELP: Record<string, string> = {
+  key: "Định danh duy nhất (nên dạng namespace.key). Dùng để đọc ở frontend.",
+  value: "Giá trị chính. Với kiểu phức tạp có thể nhập JSON.",
+  group: "Nhóm/namespace của cấu hình (site, seo, social, ui, feature, contact).",
+  label: "Tên hiển thị trong trang quản trị để người dùng dễ hiểu.",
+  description: "Ghi chú/giải thích ngắn mục đích cấu hình.",
+  type: "Kiểu dữ liệu của Value để parse đúng.",
+};
+
+function exampleForKeyByGroup(group?: string) {
+  switch ((group ?? "").toLowerCase()) {
+    case "seo":
+      return "seo.defaultTitle";
+    case "social":
+      return "social.facebook";
+    case "ui":
+      return "ui.primaryColor";
+    case "feature":
+      return "feature.enableWishlist";
+    case "contact":
+      return "contact.phone";
+    case "site":
+    default:
+      return "site.name";
+  }
+}
+
+function exampleForValueByType(type?: string) {
+  switch ((type ?? "string").toLowerCase()) {
+    case "number":
+      return "42";
+    case "boolean":
+      return "true";
+    case "json":
+      return '{"en":"Title","vi":"Tiêu đề"}';
+    case "url":
+      return "https://example.com";
+    case "email":
+      return "hello@example.com";
+    case "phone":
+      return "0909123456";
+    case "color":
+      return "#0ea5e9";
+    case "imageId":
+      return "<id_ảnh_từ_Images>";
+    case "richtext":
+      return "<p>Nội dung...</p>";
+    case "string":
+    default:
+      return "Công ty ABC";
+  }
+}
+
+const SETTINGS_EXAMPLE: Record<string, (form: Record<string, any>) => string | undefined> = {
+  key: (form) => exampleForKeyByGroup(form.group),
+  value: (form) => exampleForValueByType(form.type),
+  group: () => "site",
+  label: (form) => (form.group === "seo" ? "Tiêu đề mặc định" : "Tên website"),
+  description: (form) => (form.group === "seo" ? "Dùng cho thẻ title" : "Hiển thị ở header"),
+  type: (form) => (form.key?.endsWith("Color") ? "color" : "string"),
+};
+
 type Props = {
   resource: string;
   id?: string; // nếu có là edit form
@@ -119,6 +204,7 @@ export default function ResourceForm({ resource, id }: Props) {
             resource={resource}
             field={f}
             value={form[f.name]}
+            form={form}
             onChange={(v) =>
               setForm((s) => {
                 const next: any = { ...s, [f.name]: v };
@@ -138,6 +224,17 @@ export default function ResourceForm({ resource, id }: Props) {
               })
             }
           />
+          {(() => {
+            const help = (f as any).help ?? (resource === "settings" ? SETTINGS_HELP[f.name] : undefined);
+            const example = resource === "settings" ? SETTINGS_EXAMPLE[f.name]?.(form) : undefined;
+            if (!help && !example) return null;
+            return (
+              <p className="text-xs text-muted-foreground">
+                {help}
+                {example ? <span className="block">Ví dụ: {example}</span> : null}
+              </p>
+            );
+          })()}
         </div>
       ))}
       <div className="flex items-center gap-2">
@@ -148,8 +245,28 @@ export default function ResourceForm({ resource, id }: Props) {
   );
 }
 
-function FieldControl({ resource, field, value, onChange }: { resource: string; field: FieldConfig; value: any; onChange: (v: any) => void }) {
+function FieldControl({ resource, field, value, onChange, form }: { resource: string; field: FieldConfig; value: any; onChange: (v: any) => void; form?: any }) {
   const mod = apiOf(resource);
+  // Override cho resource 'settings' để hiển thị dropdown cho type và group
+  if (resource === "settings" && (field.name === "type" || field.name === "group")) {
+    const opts = SETTINGS_SELECTS[field.name] ?? [];
+    return (
+      <select
+        className="h-9 rounded-md border bg-background px-3"
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+      >
+        <option value="">-- Chọn --</option>
+        {opts.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+    );
+  }
+  if (resource === "settings" && field.name === "value") {
+    const dynamicPlaceholder = exampleForValueByType(form?.type);
+    return <Input value={value ?? ""} placeholder={dynamicPlaceholder} onChange={(e) => onChange(e.target.value)} />;
+  }
   switch (field.type) {
     case "text":
       return <Input value={value ?? ""} placeholder={field.placeholder} onChange={(e) => onChange(e.target.value)} />;
