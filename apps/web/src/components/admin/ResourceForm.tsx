@@ -20,7 +20,11 @@ export default function ResourceForm({ resource, id }: Props) {
   const config = RESOURCES_MAP[resource];
   const mod = apiOf(resource);
   const isEdit = !!id;
-  const fields = (config.editFields ?? config.createFields) as FieldConfig[];
+  let fields = (config.editFields ?? config.createFields) as FieldConfig[];
+  // Với images, không yêu cầu URL, ưu tiên storageId
+  if (resource === "images") {
+    fields = fields.filter((f) => !["url", "size", "mimeType"].includes(f.name));
+  }
 
   // Luôn truyền hàm query hợp lệ; dùng args = undefined để skip khi tạo mới
   const convex = useConvex();

@@ -107,7 +107,10 @@ export default defineSchema({
 
   images: defineTable({
     filename: v.string(),
-    url: v.string(),
+    // Duy trì url cho tương thích cũ, nhưng sẽ chuyển sang dùng storageId
+    url: v.optional(v.string()),
+    // Lưu trực tiếp file vào Convex Storage
+    storageId: v.optional(v.id("_storage")),
     alt: v.optional(v.string()),
     title: v.optional(v.string()),
     size: v.number(), // bytes
@@ -224,4 +227,3 @@ export default defineSchema({
     .index("by_group", { fields: ["group"] })
     .index("by_type", { fields: ["type"] }),
 });
-

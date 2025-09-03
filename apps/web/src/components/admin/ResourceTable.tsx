@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { RESOURCES_MAP, apiOf, type ResourceConfig } from "@/config/resources";
+import { ImagePreviewThumb } from "@/components/admin/ImagePreviewThumb";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -25,7 +26,22 @@ export default function ResourceTable({ resource }: Props) {
   const del = useMutation(mod.deleteOne);
 
   if (!config) return <div>Resource không tồn tại.</div>;
-  const cols = config.listColumns;
+  const cols = useMemo(() => {
+    if (resource === "images") {
+      const toMb = (bytes: any) => {
+        const n = typeof bytes === "number" ? bytes : Number(bytes ?? 0);
+        if (!Number.isFinite(n)) return "-";
+        return `${(n / (1024 * 1024)).toFixed(2)} MB`;
+      };
+      return [
+        { key: "preview", label: "Preview", width: "w-[84px]", render: (row: any) => <ImagePreviewThumb id={row._id} /> },
+        ...config.listColumns.map((c: any) =>
+          c.key === "size" ? { ...c, render: (row: any) => toMb(row.size) } : c
+        ),
+      ];
+    }
+    return config.listColumns;
+  }, [config.listColumns, resource]);
 
   return (
     <div className="space-y-4">

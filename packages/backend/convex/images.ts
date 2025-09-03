@@ -74,7 +74,8 @@ export const create = mutation({
   args: {
     dto: v.object({
       filename: v.string(),
-      url: v.string(),
+      url: v.optional(v.string()),
+      storageId: v.optional(v.id("_storage")),
       alt: v.optional(v.string()),
       title: v.optional(v.string()),
       size: v.number(),
@@ -96,6 +97,7 @@ export const update = mutation({
     patch: v.object({
       filename: v.optional(v.string()),
       url: v.optional(v.string()),
+      storageId: v.optional(v.id("_storage")),
       alt: v.optional(v.string()),
       title: v.optional(v.string()),
       size: v.optional(v.number()),
@@ -114,6 +116,7 @@ export const guardedUpdate = mutation({
   args: { id: v.id(TABLE), expectedUpdatedAt: v.number(), patch: v.object({
     filename: v.optional(v.string()),
     url: v.optional(v.string()),
+    storageId: v.optional(v.id("_storage")),
     alt: v.optional(v.string()),
     title: v.optional(v.string()),
     size: v.optional(v.number()),
@@ -142,6 +145,7 @@ export const bulkUpdate = mutation({
   args: { ids: v.array(v.id(TABLE)), patch: v.object({
     filename: v.optional(v.string()),
     url: v.optional(v.string()),
+    storageId: v.optional(v.id("_storage")),
     alt: v.optional(v.string()),
     title: v.optional(v.string()),
     size: v.optional(v.number()),
@@ -187,6 +191,7 @@ export const clone = mutation({
   args: { id: v.id(TABLE), overrides: v.optional(v.object({
     filename: v.optional(v.string()),
     url: v.optional(v.string()),
+    storageId: v.optional(v.id("_storage")),
     alt: v.optional(v.string()),
     title: v.optional(v.string()),
     size: v.optional(v.number()),
@@ -201,6 +206,7 @@ export const clone = mutation({
     const dto = {
       filename: overrides?.filename ?? src.filename,
       url: overrides?.url ?? src.url,
+      storageId: overrides?.storageId ?? (src as any).storageId,
       alt: overrides?.alt ?? src.alt,
       title: overrides?.title ?? (src.title ? `${src.title} (Copy)` : undefined),
       size: overrides?.size ?? src.size,
@@ -220,7 +226,8 @@ export const upsert = mutation({
     where: v.object({ field: v.string(), value: v.any() }),
     create: v.object({
       filename: v.string(),
-      url: v.string(),
+      url: v.optional(v.string()),
+      storageId: v.optional(v.id("_storage")),
       alt: v.optional(v.string()),
       title: v.optional(v.string()),
       size: v.number(),
@@ -231,6 +238,7 @@ export const upsert = mutation({
     update: v.object({
       filename: v.optional(v.string()),
       url: v.optional(v.string()),
+      storageId: v.optional(v.id("_storage")),
       alt: v.optional(v.string()),
       title: v.optional(v.string()),
       size: v.optional(v.number()),
@@ -251,3 +259,59 @@ export const upsert = mutation({
   },
 });
 
+// Upload trực tiếp vào Convex Storage
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const uploadUrl = await ctx.storage.generateUploadUrl();
+    return { uploadUrl };
+  },
+});
+
+// Tạo bản ghi ảnh sau khi đã POST file tới uploadUrl và nhận storageId
+export const createFromUpload = mutation({
+  args: {
+    storageId: v.id("_storage"),
+    filename: v.string(),
+    mimeType: v.string(),
+    size: v.number(),
+    alt: v.optional(v.string()),
+    title: v.optional(v.string()),
+    sortOrder: v.number(),
+    isVisible: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    const nowTs = now();
+    const id = await ctx.db.insert(TABLE, {
+      filename: args.filename,
+      url: undefined,
+      storageId: args.storageId,
+      alt: args.alt,
+      title: args.title,
+      size: args.size,
+      mimeType: args.mimeType,
+      sortOrder: args.sortOrder,
+      isVisible: args.isVisible,
+      createdAt: nowTs,
+      updatedAt: nowTs,
+    } as any);
+    return ctx.db.get(id);
+  },
+});
+
+// Lấy URL tạm thời để xem ảnh (ưu tiên storageId)
+export const getViewUrl = query({
+  args: { id: v.id(TABLE) },
+  handler: async (ctx, { id }) => {
+    const doc = await ctx.db.get(id);
+    if (!doc) return { url: null as string | null };
+    // @ts-ignore - có thể không có storageId trên bản ghi cũ
+    const sid = (doc as any).storageId as any;
+    if (sid) {
+      const url = await ctx.storage.getUrl(sid);
+      return { url };
+    }
+    // fallback url chuỗi cũ nếu có
+    return { url: (doc as any).url ?? null };
+  },
+});
