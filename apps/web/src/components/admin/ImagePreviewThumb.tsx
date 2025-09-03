@@ -3,9 +3,12 @@
 import { useQuery } from "convex/react";
 import { api } from "@nhanbanacc/backend/convex/_generated/api";
 
-export function ImagePreviewThumb({ id, size = 48 }: { id: string; size?: number }) {
-  const data = useQuery(api.images.getViewUrl, { id: id as any });
-  const url = data?.url ?? null;
+export function ImagePreviewThumb({ id, size = 48 }: { id?: string | null; size?: number }) {
+  const data = useQuery(
+    api.images.getViewUrl,
+    (id ? ({ id: id as any } as any) : "skip") as any,
+  );
+  const url = id ? (data?.url ?? null) : null;
   return (
     <div className="h-12 w-12 overflow-hidden rounded border" style={{ width: size, height: size }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -17,4 +20,3 @@ export function ImagePreviewThumb({ id, size = 48 }: { id: string; size?: number
     </div>
   );
 }
-

@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 export type FieldType =
   | "text"
   | "textarea"
+  | "richtext"
   | "number"
   | "boolean"
   | "select"

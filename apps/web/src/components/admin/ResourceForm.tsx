@@ -9,6 +9,8 @@ import { slugify } from "@/lib/utils";
 import { toast } from "sonner";
 import { RESOURCES_MAP, apiOf, type FieldConfig } from "@/config/resources";
 import { useRouter } from "next/navigation";
+import { ImagePreviewThumb } from "./ImagePreviewThumb";
+import RichTextEditor from "./RichTextEditor";
 
 type Props = {
   resource: string;
@@ -71,7 +73,7 @@ export default function ResourceForm({ resource, id }: Props) {
       // Auto-generate slug nếu có field slug và đang trống
       if (fields.some((f) => f.name === "slug")) {
         const hasSlug = typeof dto.slug === "string" && String(dto.slug).trim() !== "";
-        const baseName = (dto as any).name ?? (form as any).name;
+        const baseName = (dto as any).name ?? (form as any).name ?? (dto as any).title ?? (form as any).title;
         if (!hasSlug && baseName) dto.slug = slugify(String(baseName));
       }
 
@@ -122,10 +124,10 @@ export default function ResourceForm({ resource, id }: Props) {
                 const next: any = { ...s, [f.name]: v };
                 // T? ??ng c?p nh?t slug theo name cho ??n khi user t?nh s?a slug
                 if (
-                  f.name === "name" &&
+                  (f.name === "name" || f.name === "title") &&
                   fields.some((x) => x.name === "slug")
                 ) {
-                  const prevAuto = slugify(String(s.name ?? ""));
+                  const prevAuto = slugify(String(s.name ?? s.title ?? ""));
                   const slugEmpty = !s.slug || String(s.slug).trim() === "";
                   const slugWasAuto = s.slug === prevAuto;
                   if (slugEmpty || slugWasAuto) {
@@ -152,7 +154,20 @@ function FieldControl({ resource, field, value, onChange }: { resource: string; 
     case "text":
       return <Input value={value ?? ""} placeholder={field.placeholder} onChange={(e) => onChange(e.target.value)} />;
     case "textarea":
+      if (resource === "posts" && field.name === "content") {
+        return (
+          <div className="rounded-md border bg-background">
+            <RichTextEditor value={value ?? ""} onChange={onChange} placeholder={field.placeholder ?? "Nhập nội dung..."} />
+          </div>
+        );
+      }
       return <textarea value={value ?? ""} placeholder={field.placeholder} onChange={(e) => onChange(e.target.value)} className="min-h-[100px] rounded-md border bg-background px-3 py-2" />;
+    case "richtext":
+      return (
+        <div className="rounded-md border bg-background">
+          <RichTextEditor value={value ?? ""} onChange={onChange} placeholder={field.placeholder ?? "Nhập nội dung..."} />
+        </div>
+      );
     case "number":
       return <Input type="number" value={value ?? ""} onChange={(e) => onChange(e.target.value === "" ? undefined : Number(e.target.value))} />;
     case "boolean":
@@ -166,7 +181,10 @@ function FieldControl({ resource, field, value, onChange }: { resource: string; 
       return (
         <select className="h-9 rounded-md border bg-background px-3" value={value ?? ""} onChange={(e) => onChange(e.target.value)}>
           <option value="">-- Chọn --</option>
-          {field.options?.map((o) => (
+          {(field.name === "status" ? (field.options ?? []).map((o) => ({
+            ...o,
+            label: o.value === "draft" ? "Nháp" : o.value === "published" ? "Xuất bản" : o.label,
+          })) : (field.options ?? [])).map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
           ))}
         </select>
@@ -174,15 +192,38 @@ function FieldControl({ resource, field, value, onChange }: { resource: string; 
     case "fk": {
       const fkMod = apiOf(field.fk!.resource);
       const [q, setQ] = useState("");
+      const [open, setOpen] = useState(false);
       const suggest = useQuery(fkMod.suggest, { q: q ?? "", limit: 8 });
       return (
-        <div className="relative">
+        <div className="relative space-y-2 group">
+          {field.fk!.resource === "images" && (
+            <div className="flex items-center gap-3" onClick={() => setOpen(false)}>
+              <ImagePreviewThumb id={value} size={56} />
+              <div className="text-xs text-muted-foreground min-w-0">
+                {value ? (
+                  <div className="flex items-center gap-2">
+                    <span className="truncate">ID: {String(value)}</span>
+                    <Button type="button" variant="outline" size="sm" onClick={() => onChange(undefined)}>Bỏ chọn</Button>
+                    <a href="/dashboard/resources/images/new" target="_blank" className="text-xs underline">Tải ảnh mới</a>
+                  </div>
+                ) : (
+                  <div className="text-xs">Chưa chọn ảnh thumbnail</div>
+                )}
+              </div>
+            </div>
+          )}
           <Input value={q} placeholder={`Tìm ${field.label.toLowerCase()}...`} onChange={(e) => setQ(e.target.value)} />
           {suggest && suggest.length > 0 && (
-            <div className="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-md border bg-popover p-1 text-sm shadow">
+            <div className="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-md border bg-popover p-1 text-sm shadow hidden group-focus-within:block">
               {suggest.map((s: any) => (
-                <button type="button" key={String(s.id)} className="w-full rounded-sm px-2 py-1 text-left hover:bg-accent" onClick={() => { onChange(s.id); setQ(s.label); }}>
-                  {s.label}
+                <button
+                  type="button"
+                  key={String(s.id)}
+                  className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left hover:bg-accent"
+                  onMouseDown={(e) => { e.preventDefault(); onChange(s.id); setQ(s.label); }}
+                >
+                  {field.fk!.resource === "images" && <ImagePreviewThumb id={s.id} size={28} />}
+                  <span className="truncate">{s.label}</span>
                 </button>
               ))}
             </div>
