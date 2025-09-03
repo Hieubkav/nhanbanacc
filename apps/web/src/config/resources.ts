@@ -1,5 +1,7 @@
 import { api } from "@nhanbanacc/backend/convex/_generated/api";
 import type { ReactNode } from "react";
+import { createElement } from "react";
+import ProductFirstImageCell from "@/components/admin/ProductFirstImageCell";
 
 export type FieldType =
   | "text"
@@ -100,6 +102,7 @@ export const RESOURCES: ResourceConfig[] = [
     key: "products",
     title: "Sản phẩm",
     listColumns: [
+      { key: "preview", label: "Ảnh", width: "w-[84px]", render: (row: any) => createElement(ProductFirstImageCell as any, { productId: String(row._id), size: 56 }) },
       { key: "name", label: "Tên" },
       { key: "slug", label: "Slug" },
       { key: "status", label: "Trạng thái" },
@@ -231,3 +234,8 @@ export const RESOURCES: ResourceConfig[] = [
 export const RESOURCES_MAP = Object.fromEntries(
   RESOURCES.map((r) => [r.key, r]),
 );
+
+
+
+
+

@@ -66,6 +66,7 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index("by_slug", { fields: ["slug"] })
+    .index("by_name", { fields: ["name"] })
     .index("by_isVisible", { fields: ["isVisible"] })
     .index("by_sortOrder", { fields: ["sortOrder"] }),
 
@@ -94,6 +95,8 @@ export default defineSchema({
     description: v.optional(v.string()),
     price: v.number(),
     originalPrice: v.optional(v.number()),
+    // Ghi chú riêng cho biến thể
+    note: v.optional(v.string()),
     isDefault: v.boolean(),
     sortOrder: v.number(),
     isVisible: v.boolean(),

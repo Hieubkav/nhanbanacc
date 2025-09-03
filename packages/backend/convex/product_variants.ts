@@ -15,7 +15,7 @@ import {
 } from "./lib/crud";
 
 const TABLE = "product_variants" as const;
-const SEARCH_FIELDS = ["name", "description"] as const;
+const SEARCH_FIELDS = ["name", "description", "note"] as const;
 const LABEL_FIELDS = ["name"] as const;
 const TOGGLE_FIELDS = ["isVisible", "isDefault"] as const;
 
@@ -97,6 +97,7 @@ export const create = mutation({
       description: v.optional(v.string()),
       price: v.number(),
       originalPrice: v.optional(v.number()),
+      note: v.optional(v.string()),
       isDefault: v.boolean(),
       sortOrder: v.number(),
       isVisible: v.boolean(),
@@ -128,6 +129,7 @@ export const update = mutation({
       description: v.optional(v.string()),
       price: v.optional(v.number()),
       originalPrice: v.optional(v.number()),
+      note: v.optional(v.string()),
       isDefault: v.optional(v.boolean()),
       sortOrder: v.optional(v.number()),
       isVisible: v.optional(v.boolean()),
@@ -178,6 +180,7 @@ export const guardedUpdate = mutation({
       description: v.optional(v.string()),
       price: v.optional(v.number()),
       originalPrice: v.optional(v.number()),
+      note: v.optional(v.string()),
       isDefault: v.optional(v.boolean()),
       sortOrder: v.optional(v.number()),
       isVisible: v.optional(v.boolean()),
@@ -217,6 +220,7 @@ export const bulkUpdate = mutation({
     description: v.optional(v.string()),
     price: v.optional(v.number()),
     originalPrice: v.optional(v.number()),
+    note: v.optional(v.string()),
     isDefault: v.optional(v.boolean()),
     sortOrder: v.optional(v.number()),
     isVisible: v.optional(v.boolean()),
@@ -288,6 +292,7 @@ export const clone = mutation({
     description: v.optional(v.string()),
     price: v.optional(v.number()),
     originalPrice: v.optional(v.number()),
+    note: v.optional(v.string()),
     isDefault: v.optional(v.boolean()),
     sortOrder: v.optional(v.number()),
     isVisible: v.optional(v.boolean()),
@@ -302,6 +307,7 @@ export const clone = mutation({
       description: overrides?.description ?? src.description,
       price: overrides?.price ?? src.price,
       originalPrice: overrides?.originalPrice ?? src.originalPrice,
+      note: overrides?.note ?? (src as any).note,
       isDefault: overrides?.isDefault ?? false,
       sortOrder: overrides?.sortOrder ?? src.sortOrder,
       isVisible: overrides?.isVisible ?? src.isVisible,
@@ -322,6 +328,7 @@ export const upsert = mutation({
       description: v.optional(v.string()),
       price: v.number(),
       originalPrice: v.optional(v.number()),
+      note: v.optional(v.string()),
       isDefault: v.boolean(),
       sortOrder: v.number(),
       isVisible: v.boolean(),
@@ -332,6 +339,7 @@ export const upsert = mutation({
       description: v.optional(v.string()),
       price: v.optional(v.number()),
       originalPrice: v.optional(v.number()),
+      note: v.optional(v.string()),
       isDefault: v.optional(v.boolean()),
       sortOrder: v.optional(v.number()),
       isVisible: v.optional(v.boolean()),
@@ -348,4 +356,3 @@ export const upsert = mutation({
     return ctx.db.get(found._id);
   },
 });
-

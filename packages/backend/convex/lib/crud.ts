@@ -118,7 +118,7 @@ export function paginate(
   let offset = 0;
   if (cursor) {
     try {
-      const decoded = JSON.parse(Buffer.from(cursor, "base64").toString("utf8"));
+      const decoded = (() => { try { const g:any = globalThis as any; if (typeof g.atob === "function") { return JSON.parse(g.atob(cursor)); } if (typeof g.Buffer !== "undefined") { return JSON.parse(g.Buffer.from(cursor, "base64").toString("utf8")); } } catch {} return {}; })();
       if (decoded && typeof decoded.o === "number") offset = decoded.o;
     } catch {}
   } else if (page && page > 1) {
@@ -128,7 +128,7 @@ export function paginate(
   const nextOffset = offset + slice.length;
   const hasMore = nextOffset < total;
   const nextCursor = hasMore
-    ? Buffer.from(JSON.stringify({ o: nextOffset })).toString("base64")
+    ? (() => { const payload = JSON.stringify({ o: nextOffset }); const g:any = globalThis as any; if (typeof g.btoa === "function") return g.btoa(payload); if (typeof g.Buffer !== "undefined") return g.Buffer.from(payload).toString("base64"); return undefined; })()
     : undefined;
   const currentPage = Math.floor(offset / size) + 1;
   return {
@@ -255,4 +255,6 @@ export function onlyBooleanToggle(allowed: string[], field: string) {
     throw new Error(`Không hỗ trợ toggle cho trường '${field}'.`);
   }
 }
+
+
 

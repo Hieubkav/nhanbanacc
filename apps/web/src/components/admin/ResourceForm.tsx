@@ -154,7 +154,7 @@ function FieldControl({ resource, field, value, onChange }: { resource: string; 
     case "text":
       return <Input value={value ?? ""} placeholder={field.placeholder} onChange={(e) => onChange(e.target.value)} />;
     case "textarea":
-      if (resource === "posts" && field.name === "content") {
+      if ((resource === "posts" && field.name === "content") || (resource === "products" && field.name === "description")) {
         return (
           <div className="rounded-md border bg-background">
             <RichTextEditor value={value ?? ""} onChange={onChange} placeholder={field.placeholder ?? "Nhập nội dung..."} />
@@ -236,3 +236,4 @@ function FieldControl({ resource, field, value, onChange }: { resource: string; 
       return <Input value={value ?? ""} onChange={(e) => onChange(e.target.value)} />;
   }
 }
+
