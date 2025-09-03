@@ -45,9 +45,9 @@ export async function POST(req: Request) {
 
       // Xin URL upload từ Convex và upload buffer WebP
       const { uploadUrl } = await client.mutation(api.images.generateUploadUrl, {});
-      // BodyInit cần kiểu DOM-compatible: Blob|ArrayBuffer|Uint8Array...
-      const body: Blob = new Blob([webp], { type: "image/webp" });
-      const r = await fetch(uploadUrl, { method: "POST", body });
+      // BodyInit nên là ArrayBuffer để tránh xung đột kiểu giữa Buffer & BlobPart
+      const ab = webp.buffer.slice(webp.byteOffset, webp.byteOffset + webp.byteLength) as ArrayBuffer;
+      const r = await fetch(uploadUrl, { method: "POST", headers: { "Content-Type": "image/webp" }, body: ab });
       if (!r.ok) {
         const txt = await r.text();
         results.push({ name: f.name, ok: false, error: `Upload lỗi: ${r.status} ${txt}` });
