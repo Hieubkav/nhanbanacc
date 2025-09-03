@@ -1,0 +1,479 @@
+1	"use client";
+2	
+3	import { useEffect, useMemo, useState } from "react";
+4	import { useConvex, useMutation, useQuery } from "convex/react";
+5	import { api } from "@nhanbanacc/backend/convex/_generated/api";
+6	import { RESOURCES_MAP, apiOf, type FieldConfig } from "@/config/resources";
+7	import { Input } from "@/components/ui/input";
+8	import { Button } from "@/components/ui/button";
+9	import { Label } from "@/components/ui/label";
+10	import { useRouter } from "next/navigation";
+11	import { slugify } from "@/lib/utils";
+12	import { toast } from "sonner";
+13	import { ImagePreviewThumb } from "./ImagePreviewThumb";
+14	import ImageLibraryPicker from "./ImageLibraryPicker";
+15	import RichTextEditor from "./RichTextEditor";
+16	
+17	export default function ProductCreateWithRelations() {
+18	  const router = useRouter();
+19	  const resource = "products";
+20	  const config = RESOURCES_MAP[resource]!;
+21	  const fields = config.createFields as FieldConfig[];
+22	
+23	  const convex = useConvex();
+24	  const createProduct = useMutation(api.products.create);
+25	  const createVariant = useMutation(api.product_variants.create);
+26	  const createProdImage = useMutation(api.product_images.create);
+27	
+28	  const [form, setForm] = useState<Record<string, any>>({ sortOrder: 1 });
+29	
+30	  // Draft variants
+31	  type DraftVar = { name: string; price: string; originalPrice?: string; note?: string; isDefault?: boolean; isVisible?: boolean };
+32	  const [variants, setVariants] = useState<DraftVar[]>([]);
+33	
+34	  // Draft images
+35	  const [imageIds, setImageIds] = useState<string[]>([]);
+36	  const [imagesTab, setImagesTab] = useState<"library" | "upload">("upload");
+37	  const [libOpen, setLibOpen] = useState(false);
+38	  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
+39	  const [uploadTitle, setUploadTitle] = useState("");
+40	  const [uploadAlt, setUploadAlt] = useState("");
+41	  const [uploadVisible, setUploadVisible] = useState(true);
+42	  const [uploading, setUploading] = useState(false);
+43	
+44	  const addVariant = (v: DraftVar) => {
+45	    if (!v.name?.trim()) return;
+46	    if (v.price === undefined || v.price === null || v.price === "") return;
+47	    setVariants((arr) => [...arr, { name: v.name.trim(), price: String(v.price), originalPrice: v.originalPrice, note: v.note, isDefault: !!v.isDefault, isVisible: v.isVisible ?? true }]);
+48	  };
+49	
+50	  const removeVariant = (idx: number) => setVariants((arr) => arr.filter((_, i) => i !== idx));
+51	  const moveVariant = (idx: number, dir: -1 | 1) => setVariants((arr) => {
+52	    const to = idx + dir; if (to < 0 || to >= arr.length) return arr; const cp = arr.slice(); const t = cp[idx]; cp[idx] = cp[to]; cp[to] = t; return cp;
+53	  });
+54	
+55	  const addImage = (id: string) => setImageIds((ids) => (ids.includes(id) ? ids : [...ids, id]));
+56	  const removeImage = (id: string) => setImageIds((ids) => ids.filter((x) => x !== id));
+57	  const moveImage = (id: string, dir: -1 | 1) => setImageIds((ids) => {
+58	    const idx = ids.findIndex((x) => x === id); const to = idx + dir; if (idx < 0 || to < 0 || to >= ids.length) return ids; const cp = ids.slice(); const t = cp[idx]; cp[idx] = cp[to]; cp[to] = t; return cp;
+59	  });
+60	
+61	  const onFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+62	    const files = Array.from(e.target.files ?? []);
+63	    if (!files.length) return;
+64	    setUploadFiles(files);
+65	  };
+66	
+67	  const uploadSelected = async () => {
+68	    try {
+69	      if (uploadFiles.length === 0) { toast.error("Vui lòng chọn ít nhất 1 ảnh"); return; }
+70	      setUploading(true);
+71	      const fd = new FormData();
+72	      for (const f of uploadFiles) fd.append("files", f);
+73	      if (uploadTitle) fd.append("title", uploadTitle);
+74	      if (uploadAlt) fd.append("alt", uploadAlt);
+75	      fd.append("sortOrder", String((imageIds.length || 0) + 1));
+76	      fd.append("isVisible", String(uploadVisible));
+77	      const r = await fetch("/api/images/upload", { method: "POST", body: fd });
+78	      const json = await r.json();
+79	      if (!r.ok) { throw new Error(json?.error || `HTTP ${r.status}`); }
+80	      const okItems: string[] = (json?.results ?? []).filter((x: any) => x.ok && x.id).map((x: any) => String(x.id));
+81	      if (okItems.length) {
+82	        setImageIds((ids) => {
+83	          const set = new Set(ids);
+84	          okItems.forEach((id) => set.add(id));
+85	          return Array.from(set);
+86	        });
+87	        toast.success(`Đã tải ${okItems.length}/${uploadFiles.length} ảnh và thêm vào sản phẩm`);
+88	        setUploadFiles([]);
+89	        setUploadTitle("");
+90	        setUploadAlt("");
+91	      } else {
+92	        toast.error("Tải ảnh không thành công");
+93	      }
+94	    } catch (err: any) {
+95	      toast.error(err?.message || "Lỗi upload ảnh");
+96	    } finally {
+97	      setUploading(false);
+98	    }
+99	  };
+100	
+101	  const onSubmit = async (e: React.FormEvent) => {
+102	    e.preventDefault();
+103	    try {
+104	      // Gather dto like ResourceForm
+105	      const dto: Record<string, any> = {};
+106	      for (const f of fields) {
+107	        const v = (form as any)[f.name];
+108	        if (v !== undefined) dto[f.name] = v;
+109	      }
+110	      if (fields.some((f) => f.name === "slug")) {
+111	        const hasSlug = typeof dto.slug === "string" && String(dto.slug).trim() !== "";
+112	        const baseName = (dto as any).name ?? (form as any).name ?? (dto as any).title ?? (form as any).title;
+113	        if (!hasSlug && baseName) dto.slug = slugify(String(baseName));
+114	      }
+115	      // Validate required
+116	      const missing: string[] = [];
+117	      for (const f of fields) {
+118	        if (!f.required) continue;
+119	        const v = dto[f.name];
+120	        const isMissing = f.type === "number" ? v === undefined || v === null || Number.isNaN(v) : f.type === "boolean" ? v === undefined || v === null : v === undefined || v === null || String(v).trim() === "";
+121	        if (isMissing) missing.push(f.label);
+122	      }
+123	      if (missing.length) { toast.error(`Thiếu trường bắt buộc: ${missing.join(", ")}`); return; }
+124	
+125	      const product = await createProduct({ dto } as any);
+126	      const productId = (product as any)?._id as string | undefined;
+127	      if (!productId) throw new Error("Không lấy được ID sản phẩm");
+128	
+129	      // Create variants
+130	      if (variants.length > 0) {
+131	        const hasDefault = variants.some((v) => !!v.isDefault);
+132	        await Promise.all(
+133	          variants.map((v, i) => createVariant({ dto: {
+134	            productId: productId as any,
+135	            name: v.name,
+136	            description: undefined,
+137	            price: Number(v.price),
+138	            originalPrice: v.originalPrice === undefined || v.originalPrice === "" ? undefined : Number(v.originalPrice),
+139	            note: v.note || undefined,
+140	            isDefault: hasDefault ? !!v.isDefault : i === 0, // nếu chưa đánh dấu, set biến thể đầu làm mặc định
+141	            sortOrder: i + 1,
+142	            isVisible: v.isVisible ?? true,
+143	          } as any } as any))
+144	        );
+145	      }
+146	
+147	      // Create product_images
+148	      if (imageIds.length > 0) {
+149	        await Promise.all(imageIds.map((imgId, i) => createProdImage({ dto: { productId: productId as any, imageId: imgId as any, sortOrder: i + 1 } as any } as any)));
+150	      }
+151	
+152	      router.push(`/dashboard/resources/products/${productId}`);
+153	    } catch (err: any) {
+154	      toast.error(err?.message ?? "Lỗi khi tạo sản phẩm");
+155	    }
+156	  };
+157	
+158	  return (
+159	    <form className="space-y-6" onSubmit={onSubmit}>
+160	      {/* Product basic fields */}
+161	      <div className="grid gap-4">
+162	        {fields.map((f) => (
+163	          <div key={f.name} className="grid gap-2">
+164	            <Label>{f.label}</Label>
+165	            <FieldControl
+166	              resource={resource}
+167	              field={f}
+168	              value={form[f.name]}
+169	              onChange={(v) =>
+170	                setForm((s) => {
+171	                  const next: any = { ...s, [f.name]: v };
+172	                  if ((f.name === "name" || f.name === "title") && fields.some((x) => x.name === "slug")) {
+173	                    const prevAuto = slugify(String(s.name ?? s.title ?? ""));
+174	                    const slugEmpty = !s.slug || String(s.slug).trim() === "";
+175	                    const slugWasAuto = s.slug === prevAuto;
+176	                    if (slugEmpty || slugWasAuto) next.slug = slugify(String(v ?? ""));
+177	                  }
+178	                  return next;
+179	                })
+180	              }
+181	            />
+182	          </div>
+183	        ))}
+184	      </div>
+185	
+186	      {/* Variants draft */}
+187	      <div className="space-y-3">
+188	        <h2 className="text-lg font-semibold">Biến thể (tạo mới cùng sản phẩm)</h2>
+189	        <VariantDraftEditor onAdd={addVariant} />
+190	        <VariantDraftList rows={variants} onRemove={removeVariant} onMove={moveVariant} />
+191	      </div>
+192	
+193	      {/* Images draft */}
+194	      <div className="space-y-3">
+195	        <h2 className="text-lg font-semibold">Ảnh sản phẩm (tạo mới cùng sản phẩm)</h2>
+196	        <div className="flex items-center gap-2">
+197	          <Button type="button" variant="outline" onClick={() => setLibOpen(true)}>Chọn từ thư viện</Button>
+198	          <Button type="button" variant={imagesTab === "upload" ? "default" : "outline"} onClick={() => setImagesTab("upload")}>Tải ảnh lên</Button>
+199	        </div>
+200	
+201	        {imagesTab === "library" ? (
+202	          <div className="space-y-2">
+203	            <Input placeholder="Tìm ảnh theo tiêu đề/tên file..." value={q} onChange={(e) => setQ(e.target.value)} />
+204	            {q && suggest && suggest.length > 0 && (
+205	              <div className="max-h-64 overflow-auto rounded-md border p-1">
+206	                {suggest.map((s: any) => (
+207	                  <button
+208	                    key={String(s.id)}
+209	                    type="button"
+210	                    className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left hover:bg-accent"
+211	                    onMouseDown={(e) => { e.preventDefault(); addImage(String(s.id)); }}
+212	                  >
+213	                    <ImagePreviewThumb id={s.id} size={28} />
+214	                    <span className="truncate text-sm">{s.label}</span>
+215	                  </button>
+216	                ))}
+217	              </div>
+218	            )}
+219	          </div>
+220	        ) : (
+221	          <div className="grid gap-3 rounded-md border p-3">
+222	            <div className="grid gap-2">
+223	              <Label>Chọn ảnh (có thể chọn nhiều)</Label>
+224	              <Input type="file" multiple accept="image/*" onChange={onFilesChange} />
+225	              {uploadFiles.length > 0 && (
+226	                <div className="mt-1 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+227	                  {uploadFiles.map((f, i) => (
+228	                    <div key={i} className="rounded-md border p-2 text-xs">
+229	                      <div className="truncate font-medium" title={f.name}>{f.name}</div>
+230	                      <div className="text-muted-foreground">{(f.size/1024).toFixed(1)} KB</div>
+231	                    </div>
+232	                  ))}
+233	                </div>
+234	              )}
+235	            </div>
+236	            <div className="grid gap-2 sm:grid-cols-2">
+237	              <div className="grid gap-1">
+238	                <Label>Tiêu đề (áp dụng cho tất cả)</Label>
+239	                <Input value={uploadTitle} onChange={(e) => setUploadTitle(e.target.value)} placeholder="Tuỳ chọn" />
+240	              </div>
+241	              <div className="grid gap-1">
+242	                <Label>Alt (áp dụng cho tất cả)</Label>
+243	                <Input value={uploadAlt} onChange={(e) => setUploadAlt(e.target.value)} placeholder="Văn bản thay thế" />
+244	              </div>
+245	            </div>
+246	            <div className="flex items-center gap-2">
+247	              <input id="uploadVisible" type="checkbox" className="h-4 w-4" checked={uploadVisible} onChange={(e) => setUploadVisible(e.target.checked)} />
+248	              <Label htmlFor="uploadVisible">Hiển thị</Label>
+249	            </div>
+250	            <div>
+251	              <Button type="button" onClick={uploadSelected} disabled={uploading}>{uploading ? "Đang tải..." : "Tải lên và thêm vào danh sách"}</Button>
+252	            </div>
+253	          </div>
+254	        )}
+255	
+256	        <ImageDraftList imageIds={imageIds} onRemove={removeImage} onMove={moveImage} />
+257	      </div>
+258	
+259	
+260	      <ImageLibraryPicker
+261	        open={libOpen}
+262	        onClose={() => setLibOpen(false)}
+263	        onConfirm={(ids) => {
+264	          setImageIds((prev) => {
+265	            const set = new Set(prev);
+266	            ids.forEach((id) => set.add(String(id)));
+267	            return Array.from(set);
+268	          });
+269	          setLibOpen(false);
+270	        }}
+271	      />
+272	
+273	      <div className="flex items-center gap-2">
+274	        <Button type="submit">Tạo sản phẩm</Button>
+275	        <Button type="button" variant="outline" onClick={() => router.back()}>Hủy</Button>
+276	      </div>
+277	    </form>
+278	  );
+279	}
+280	
+281	function FieldControl({ resource, field, value, onChange }: { resource: string; field: FieldConfig; value: any; onChange: (v: any) => void }) {
+282	  const mod = apiOf(resource);
+283	  switch (field.type) {
+284	    case "text":
+285	      return <Input value={value ?? ""} placeholder={field.placeholder} onChange={(e) => onChange(e.target.value)} />;
+286	    case "textarea":
+287	      if ((resource === "posts" && field.name === "content") || (resource === "products" && field.name === "description")) {
+288	        return (
+289	          <div className="rounded-md border bg-background">
+290	            <RichTextEditor value={value ?? ""} onChange={onChange} placeholder={field.placeholder ?? "Nhập nội dung..."} />
+291	          </div>
+292	        );
+293	      }
+294	      return <textarea value={value ?? ""} placeholder={field.placeholder} onChange={(e) => onChange(e.target.value)} className="min-h-[100px] rounded-md border bg-background px-3 py-2" />;
+295	    case "richtext":
+296	      return (
+297	        <div className="rounded-md border bg-background">
+298	          <RichTextEditor value={value ?? ""} onChange={onChange} placeholder={field.placeholder ?? "Nhập nội dung..."} />
+299	        </div>
+300	      );
+301	    case "number":
+302	      return <Input type="number" value={value ?? ""} onChange={(e) => onChange(e.target.value === "" ? undefined : Number(e.target.value))} />;
+303	    case "boolean":
+304	      return (
+305	        <div className="flex items-center gap-2">
+306	          <input id={field.name} type="checkbox" checked={!!value} onChange={(e) => onChange(e.target.checked)} />
+307	          <Label htmlFor={field.name}>Bật/Tắt</Label>
+308	        </div>
+309	      );
+310	    case "select":
+311	      return (
+312	        <select className="h-9 rounded-md border bg-background px-3" value={value ?? ""} onChange={(e) => onChange(e.target.value)}>
+313	          <option value="">-- Chọn --</option>
+314	          {(field.name === "status" ? (field.options ?? []).map((o) => ({
+315	            ...o,
+316	            label: o.value === "draft" ? "Nháp" : o.value === "published" ? "Xuất bản" : o.label,
+317	          })) : (field.options ?? [])).map((o) => (
+318	            <option key={o.value} value={o.value}>{o.label}</option>
+319	          ))}
+320	        </select>
+321	      );
+322	    case "fk": {
+323	      const fkMod = apiOf(field.fk!.resource);
+324	      const [q, setQ] = useState("");
+325	      const suggest = useQuery(fkMod.suggest, { q: q ?? "", limit: 8 });
+326	      return (
+327	        <div className="relative space-y-2 group">
+328	          {field.fk!.resource === "images" && (
+329	            <div className="flex items-center gap-3">
+330	              <ImagePreviewThumb id={value} size={56} />
+331	              <div className="text-xs text-muted-foreground min-w-0">
+332	                {value ? (
+333	                  <div className="flex items-center gap-2">
+334	                    <span className="truncate">ID: {String(value)}</span>
+335	                    <Button type="button" variant="outline" size="sm" onClick={() => onChange(undefined)}>Bỏ chọn</Button>
+336	                  </div>
+337	                ) : (
+338	                  <div className="text-xs">Chưa chọn ảnh thumbnail</div>
+339	                )}
+340	              </div>
+341	            </div>
+342	          )}
+343	          <Input value={q} placeholder={`Tìm ${field.label.toLowerCase()}...`} onChange={(e) => setQ(e.target.value)} />
+344	          {suggest && suggest.length > 0 && (
+345	            <div className="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-md border bg-popover p-1 text-sm shadow hidden group-focus-within:block">
+346	              {suggest.map((s: any) => (
+347	                <button
+348	                  type="button"
+349	                  key={String(s.id)}
+350	                  className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left hover:bg-accent"
+351	                  onMouseDown={(e) => { e.preventDefault(); onChange(s.id); setQ(s.label); }}
+352	                >
+353	                  {field.fk!.resource === "images" && <ImagePreviewThumb id={s.id} size={28} />}
+354	                  <span className="truncate">{s.label}</span>
+355	                </button>
+356	              ))}
+357	            </div>
+358	          )}
+359	          {value && <div className="mt-1 text-xs text-muted-foreground">Đã chọn: {String(value)}</div>}
+360	        </div>
+361	      );
+362	    }
+363	    default:
+364	      return <Input value={value ?? ""} onChange={(e) => onChange(e.target.value)} />;
+365	  }
+366	}
+367	
+368	function VariantDraftEditor({ onAdd }: { onAdd: (v: { name: string; price: string; originalPrice?: string; note?: string; isDefault?: boolean; isVisible?: boolean }) => void }) {
+369	  const [row, setRow] = useState({ name: "", price: "", originalPrice: "", note: "", isDefault: false, isVisible: true });
+370	  return (
+371	    <div className="grid gap-2 rounded-md border p-3">
+372	      <div className="grid grid-cols-1 gap-3 sm:grid-cols-6">
+373	        <div className="sm:col-span-2">
+374	          <Label>Tên</Label>
+375	          <Input value={row.name} onChange={(e) => setRow((s) => ({ ...s, name: e.target.value }))} />
+376	        </div>
+377	        <div>
+378	          <Label>Giá</Label>
+379	          <Input type="number" value={row.price} onChange={(e) => setRow((s) => ({ ...s, price: e.target.value }))} />
+380	        </div>
+381	        <div>
+382	          <Label>Giá gốc</Label>
+383	          <Input type="number" value={row.originalPrice} onChange={(e) => setRow((s) => ({ ...s, originalPrice: e.target.value }))} />
+384	        </div>
+385	        <div className="sm:col-span-2">
+386	          <Label>Ghi chú</Label>
+387	          <Input value={row.note} onChange={(e) => setRow((s) => ({ ...s, note: e.target.value }))} />
+388	        </div>
+389	      </div>
+390	      <div className="flex items-center gap-3">
+391	        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={row.isDefault} onChange={(e) => setRow((s) => ({ ...s, isDefault: e.target.checked }))} /> Mặc định</label>
+392	        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={row.isVisible} onChange={(e) => setRow((s) => ({ ...s, isVisible: e.target.checked }))} /> Hiển thị</label>
+393	        <Button type="button" onClick={() => { onAdd(row as any); setRow({ name: "", price: "", originalPrice: "", note: "", isDefault: false, isVisible: true }); }}>Thêm biến thể</Button>
+394	      </div>
+395	    </div>
+396	  );
+397	}
+398	
+399	function VariantDraftList({ rows, onRemove, onMove }: { rows: any[]; onRemove: (idx: number) => void; onMove: (idx: number, dir: -1 | 1) => void }) {
+400	  if (!rows.length) return <div className="text-sm text-muted-foreground">Chưa có biến thể</div>;
+401	  return (
+402	    <div className="overflow-x-auto rounded-md border">
+403	      <table className="min-w-[800px] w-full text-sm">
+404	        <thead className="bg-muted/50">
+405	          <tr>
+406	            <th className="p-2 text-left">Tên</th>
+407	            <th className="p-2 text-left">Giá</th>
+408	            <th className="p-2 text-left">Giá gốc</th>
+409	            <th className="p-2 text-left">Ghi chú</th>
+410	            <th className="p-2 text-left">Mặc định</th>
+411	            <th className="p-2 text-left">Hiển thị</th>
+412	            <th className="p-2 text-left">Thứ tự</th>
+413	            <th className="p-2 text-right">Hành động</th>
+414	          </tr>
+415	        </thead>
+416	        <tbody>
+417	          {rows.map((r, idx) => (
+418	            <tr key={idx} className="border-t">
+419	              <td className="p-2">{r.name}</td>
+420	              <td className="p-2">{r.price}</td>
+421	              <td className="p-2">{r.originalPrice || "-"}</td>
+422	              <td className="p-2">{r.note || "-"}</td>
+423	              <td className="p-2">{r.isDefault ? "Có" : "Không"}</td>
+424	              <td className="p-2">{r.isVisible ? "Hiện" : "Ẩn"}</td>
+425	              <td className="p-2">{idx + 1}</td>
+426	              <td className="p-2">
+427	                <div className="flex items-center justify-end gap-2">
+428	                  <Button size="sm" variant="outline" disabled={idx === 0} onClick={() => onMove(idx, -1)}>Lên</Button>
+429	                  <Button size="sm" variant="outline" disabled={idx === rows.length - 1} onClick={() => onMove(idx, 1)}>Xuống</Button>
+430	                  <Button size="sm" variant="destructive" onClick={() => onRemove(idx)}>Xoá</Button>
+431	                </div>
+432	              </td>
+433	            </tr>
+434	          ))}
+435	        </tbody>
+436	      </table>
+437	    </div>
+438	  );
+439	}
+440	
+441	function ImageDraftList({ imageIds, onRemove, onMove }: { imageIds: string[]; onRemove: (id: string) => void; onMove: (id: string, dir: -1 | 1) => void }) {
+442	  if (!imageIds.length) return <div className="text-sm text-muted-foreground">Chưa có ảnh</div>;
+443	  return (
+444	    <div className="overflow-x-auto rounded-md border">
+445	      <table className="min-w-[600px] w-full text-sm">
+446	        <thead className="bg-muted/50">
+447	          <tr>
+448	            <th className="p-2 text-left">Ảnh</th>
+449	            <th className="p-2 text-left">ImageId</th>
+450	            <th className="p-2 text-left">Thứ tự</th>
+451	            <th className="p-2 text-right">Hành động</th>
+452	          </tr>
+453	        </thead>
+454	        <tbody>
+455	          {imageIds.map((id, idx) => (
+456	            <tr key={id} className="border-t">
+457	              <td className="p-2"><ImagePreviewThumb id={id} /></td>
+458	              <td className="p-2"><code className="text-xs">{id}</code></td>
+459	              <td className="p-2">{idx + 1}</td>
+460	              <td className="p-2">
+461	                <div className="flex items-center justify-end gap-2">
+462	                  <Button size="sm" variant="outline" disabled={idx === 0} onClick={() => onMove(id, -1)}>Lên</Button>
+463	                  <Button size="sm" variant="outline" disabled={idx === imageIds.length - 1} onClick={() => onMove(id, 1)}>Xuống</Button>
+464	                  <Button size="sm" variant="destructive" onClick={() => onRemove(id)}>Xoá</Button>
+465	                </div>
+466	              </td>
+467	            </tr>
+468	          ))}
+469	        </tbody>
+470	      </table>
+471	    </div>
+472	  );
+473	}
+474	
+475	
+476	
+477	
+478	
+479	

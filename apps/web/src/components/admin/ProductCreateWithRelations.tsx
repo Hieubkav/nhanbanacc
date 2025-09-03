@@ -198,26 +198,7 @@ export default function ProductCreateWithRelations() {
           <Button type="button" variant={imagesTab === "upload" ? "default" : "outline"} onClick={() => setImagesTab("upload")}>Tải ảnh lên</Button>
         </div>
 
-        {imagesTab === "library" ? (
-          <div className="space-y-2">
-            <Input placeholder="Tìm ảnh theo tiêu đề/tên file..." value={q} onChange={(e) => setQ(e.target.value)} />
-            {q && suggest && suggest.length > 0 && (
-              <div className="max-h-64 overflow-auto rounded-md border p-1">
-                {suggest.map((s: any) => (
-                  <button
-                    key={String(s.id)}
-                    type="button"
-                    className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left hover:bg-accent"
-                    onMouseDown={(e) => { e.preventDefault(); addImage(String(s.id)); }}
-                  >
-                    <ImagePreviewThumb id={s.id} size={28} />
-                    <span className="truncate text-sm">{s.label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (
+        {imagesTab === "upload" && (
           <div className="grid gap-3 rounded-md border p-3">
             <div className="grid gap-2">
               <Label>Chọn ảnh (có thể chọn nhiều)</Label>
@@ -471,6 +452,7 @@ function ImageDraftList({ imageIds, onRemove, onMove }: { imageIds: string[]; on
     </div>
   );
 }
+
 
 
 
