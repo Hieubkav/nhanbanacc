@@ -7,19 +7,29 @@ export default function Footer() {
   const s = useQuery(api.settings.getOne);
   return (
     <footer className="border-t bg-gradient-to-r from-gray-900 to-gray-800 text-white">
-      <div className="container mx-auto px-4 py-12 grid gap-8 sm:grid-cols-1 md:grid-cols-2">
-        <div>
-          <div className="text-2xl font-bold">{s?.siteName ?? "NhanBanACC"}</div>
-          <div className="mt-2 text-gray-300">{s?.slogan ?? "Giải pháp nhanh, gọn, hiệu quả"}</div>
-          <div className="mt-6 space-y-3">
-            {s?.address ? <div className="flex items-start gap-2">📍 <span>{s.address}</span></div> : null}
-            {s?.phone ? <div className="flex items-start gap-2">📞 <span>{s.phone}</span></div> : null}
-            {s?.email ? <div className="flex items-start gap-2">✉️ <span>{s.email}</span></div> : null}
+      <div className="container mx-auto px-4 py-12 grid gap-8 sm:grid-cols-1 md:grid-cols-3">
+        <div className="md:col-span-1">
+          <div className="text-2xl font-bold mb-3">{s?.siteName ?? "NhanBanACC"}</div>
+          <p className="text-gray-300 mb-6">{s?.slogan ?? "Giải pháp nhanh, gọn, hiệu quả"}</p>
+          <div className="space-y-3">
+            {s?.address ? <div className="flex items-start gap-3">📍 <span>{s.address}</span></div> : null}
+            {s?.phone ? <div className="flex items-start gap-3">📞 <span>{s.phone}</span></div> : null}
+            {s?.email ? <div className="flex items-start gap-3">✉️ <span>{s.email}</span></div> : null}
           </div>
         </div>
-        <div>
-          <div className="text-xl font-semibold">Mạng xã hội</div>
-          <div className="mt-6 flex flex-col gap-4">
+        
+        <div className="md:col-span-1">
+          <h3 className="text-xl font-semibold mb-6">Liên kết nhanh</h3>
+          <ul className="space-y-3">
+            <li><a href="#products" className="text-gray-300 hover:text-gold transition-colors">Sản phẩm</a></li>
+            <li><a href="#posts" className="text-gray-300 hover:text-gold transition-colors">Bài viết</a></li>
+            <li><a href="#faq" className="text-gray-300 hover:text-gold transition-colors">Câu hỏi thường gặp</a></li>
+          </ul>
+        </div>
+        
+        <div className="md:col-span-1">
+          <h3 className="text-xl font-semibold mb-6">Mạng xã hội</h3>
+          <div className="flex flex-col gap-4">
             {s?.socialFacebook ? (
               <a 
                 className="flex items-center gap-3 text-gray-300 hover:text-gold transition-colors" 

@@ -42,12 +42,7 @@ export default function PostExplorer({ onOpenDetail }: { onOpenDetail: (id: stri
         </div>
       </div>
       
-      <div className="mb-4">
-        <p className="text-gray-600 dark:text-gray-300">
-          Khám phá các bài viết chuyên sâu, hướng dẫn sử dụng và tin tức mới nhất từ đội ngũ của chúng tôi. 
-          Luôn cập nhật những thông tin hữu ích để bạn không bỏ lỡ bất kỳ điều gì quan trọng.
-        </p>
-      </div>
+      {/* Removed hardcoded content as per requirements */}
       
       <EntityCardGrid
         items={merged.length ? merged : list?.items}

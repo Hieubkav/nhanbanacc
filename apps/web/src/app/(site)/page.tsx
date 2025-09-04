@@ -43,12 +43,6 @@ export default function Home() {
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Bài Viết Mới Nhất</h2>
               <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent ml-4 dark:via-gray-700"></div>
             </div>
-            <div className="mb-6">
-              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
-                Cập nhật những xu hướng mới nhất, kiến thức chuyên sâu và các mẹo hữu ích từ đội ngũ chuyên gia của chúng tôi.
-                Luôn đồng hành cùng bạn trên hành trình khám phá và phát triển.
-              </p>
-            </div>
             <PostExplorer onOpenDetail={(id) => setDetail({ kind: "post", id })} />
           </section>
 
