@@ -59,12 +59,30 @@ export default function SettingsSingletonForm() {
     }
     const copy: any = { ...one };
     delete copy._id; delete copy._creationTime;
+    // Xóa các trường timestamp không thuộc schema patch
+    // (tránh lỗi ArgumentValidationError từ Convex)
+    delete (copy as any).createdAt; delete (copy as any).updatedAt;
     setForm(copy as FormState);
   }, [one]);
 
   const onSave = async () => {
     try {
-      await save({ patch: form as any });
+      const patch: FormState = {
+        siteName: form.siteName,
+        slogan: form.slogan,
+        phone: form.phone,
+        email: form.email,
+        address: form.address,
+        logoId: form.logoId,
+        faviconId: form.faviconId,
+        seoDefaultTitle: form.seoDefaultTitle,
+        seoDefaultDescription: form.seoDefaultDescription,
+        socialFacebook: form.socialFacebook,
+        socialYoutube: form.socialYoutube,
+        socialTiktok: form.socialTiktok,
+        uiPrimaryColor: form.uiPrimaryColor,
+      };
+      await save({ patch: patch as any });
       toast.success("Đã lưu cấu hình");
     } catch (err: any) {
       toast.error(err?.message ?? "Lỗi khi lưu cấu hình");
@@ -209,4 +227,3 @@ function ImagePickField({ label, value, onPick, onClear, open, onOpen, onClose }
     </div>
   );
 }
-
