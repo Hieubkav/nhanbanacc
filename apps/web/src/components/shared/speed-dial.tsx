@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowDown, ArrowUp, Facebook, Plus, Search, Youtube } from "lucide-react";
+import { 
+  ArrowUp, 
+  ArrowDown, 
+  Search, 
+  Phone,
+  ChevronUp,
+  ChevronDown,
+  Facebook
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -43,31 +51,37 @@ export function SpeedDial({ onOpenSearch, className }: { onOpenSearch?: () => vo
               {settings?.socialFacebook ? (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button size="icon" variant="secondary" onClick={() => window.open(settings.socialFacebook!, "_blank")}> <Facebook className="size-4" /> </Button>
+                    <Button size="icon" variant="secondary" onClick={() => window.open(settings.socialFacebook!, "_blank")}> 
+                      <Facebook className="size-4" /> 
+                    </Button>
                   </TooltipTrigger>
                   <TooltipContent>Facebook</TooltipContent>
                 </Tooltip>
               ) : null}
-              {settings?.socialYoutube ? (
+              {settings?.socialZalo ? (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button size="icon" variant="secondary" onClick={() => window.open(settings.socialYoutube!, "_blank")}> <Youtube className="size-4" /> </Button>
+                    <Button size="icon" variant="secondary" onClick={() => window.open(settings.socialZalo!, "_blank")}> 
+                      <span className="font-bold">Z</span>
+                    </Button>
                   </TooltipTrigger>
-                  <TooltipContent>YouTube</TooltipContent>
+                  <TooltipContent>Zalo</TooltipContent>
                 </Tooltip>
               ) : null}
-              {settings?.socialTiktok ? (
+              {settings?.phone ? (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button size="icon" variant="secondary" onClick={() => window.open(settings.socialTiktok!, "_blank")}> <span className="text-xs font-bold">TT</span> </Button>
+                    <Button size="icon" variant="secondary" onClick={() => window.open(`tel:${settings.phone}`, "_blank")}> 
+                      <Phone className="size-4" /> 
+                    </Button>
                   </TooltipTrigger>
-                  <TooltipContent>TikTok</TooltipContent>
+                  <TooltipContent>Gọi điện</TooltipContent>
                 </Tooltip>
               ) : null}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button size="icon" variant="secondary" onClick={() => { scrollDir === "up" ? window.scrollTo({ top: 0, behavior: "smooth" }) : window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }); }}>
-                    {scrollDir === "up" ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />}
+                    {scrollDir === "up" ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>{scrollDir === "up" ? "Về đầu trang" : "Xuống cuối trang"}</TooltipContent>
@@ -75,8 +89,19 @@ export function SpeedDial({ onOpenSearch, className }: { onOpenSearch?: () => vo
             </TooltipProvider>
           </div>
         )}
-        <Button size="icon" onClick={() => setOpen((v) => !v)} aria-label="Speed dial">
-          <Plus className="size-4" />
+        <Button size="icon" onClick={() => setOpen((v) => !v)} aria-label="Speed dial" className="rounded-full shadow-lg hover:shadow-xl transition-shadow">
+          <svg 
+            className={`size-5 transition-transform ${open ? 'rotate-45' : ''}`} 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
         </Button>
       </div>
     </div>

@@ -229,6 +229,7 @@ export default defineSchema({
     socialFacebook: v.optional(v.string()),
     socialYoutube: v.optional(v.string()),
     socialTiktok: v.optional(v.string()),
+    socialZalo: v.optional(v.string()),
     uiPrimaryColor: v.optional(v.string()),
     createdAt: v.number(),
     updatedAt: v.number(),

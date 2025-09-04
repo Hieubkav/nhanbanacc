@@ -24,6 +24,7 @@ type FormState = {
   socialFacebook?: string;
   socialYoutube?: string;
   socialTiktok?: string;
+  socialZalo?: string;
   uiPrimaryColor?: string;
 };
 
@@ -40,6 +41,7 @@ const META = {
   socialFacebook: { label: "Facebook", placeholder: "https://facebook.com/yourpage" },
   socialYoutube: { label: "YouTube", placeholder: "https://youtube.com/@yourchannel" },
   socialTiktok: { label: "TikTok", placeholder: "https://www.tiktok.com/@yourid" },
+  socialZalo: { label: "Zalo", placeholder: "https://zalo.me/yourid" },
   uiPrimaryColor: { label: "Màu chủ đạo", placeholder: "#0ea5e9" },
 } as const;
 
@@ -80,6 +82,7 @@ export default function SettingsSingletonForm() {
         socialFacebook: form.socialFacebook,
         socialYoutube: form.socialYoutube,
         socialTiktok: form.socialTiktok,
+        socialZalo: form.socialZalo,
         uiPrimaryColor: form.uiPrimaryColor,
       };
       await save({ patch: patch as any });
@@ -153,6 +156,9 @@ export default function SettingsSingletonForm() {
           </Field>
           <Field label={META.socialTiktok.label} example={META.socialTiktok.placeholder}>
             <Input value={form.socialTiktok ?? ""} placeholder={META.socialTiktok.placeholder} onChange={(e) => setForm((s) => ({ ...s, socialTiktok: e.target.value }))} />
+          </Field>
+          <Field label={META.socialZalo.label} example={META.socialZalo.placeholder}>
+            <Input value={form.socialZalo ?? ""} placeholder={META.socialZalo.placeholder} onChange={(e) => setForm((s) => ({ ...s, socialZalo: e.target.value }))} />
           </Field>
         </div>
       </Section>
