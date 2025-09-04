@@ -10,6 +10,7 @@ import HeroSlider from "@/components/marketing/hero-slider";
 import ProductExplorer from "@/components/product/product-explorer";
 import PostExplorer from "@/components/post/post-explorer";
 import FAQSection from "@/components/faq/faq";
+import ReviewsSection from "@/components/marketing/reviews-section";
 import Footer from "@/components/site/footer";
 
 export default function Home() {
@@ -59,6 +60,11 @@ export default function Home() {
               </p>
             </div>
             <FAQSection />
+          </section>
+
+          {/* Reviews Section */}
+          <section className="animate-fade-in-up animation-delay-600" id="reviews">
+            <ReviewsSection />
           </section>
         </div>
       </div>

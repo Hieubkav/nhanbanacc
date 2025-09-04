@@ -230,6 +230,30 @@ export const RESOURCES: ResourceConfig[] = [
       { name: "type", label: "Type", type: "text", required: true },
     ],
   },
+  {
+    key: "reviews",
+    title: "Đánh giá",
+    listColumns: [
+      { key: "productId", label: "Sản phẩm" },
+      { key: "customerId", label: "Khách hàng" },
+      { key: "rating", label: "Đánh giá" },
+      { key: "title", label: "Tiêu đề" },
+      { key: "isVisible", label: "Hiển thị" },
+      { key: "sortOrder", label: "Thứ tự" },
+    ],
+    searchPlaceholder: "Tìm theo tiêu đề...",
+    defaultSort: { field: "sortOrder", direction: "asc" },
+    toggles: ["isVisible"],
+    createFields: [
+      { name: "productId", label: "Sản phẩm", type: "fk", fk: { resource: "products", labelFields: ["name"] }, required: true },
+      { name: "customerId", label: "Khách hàng", type: "fk", fk: { resource: "customers", labelFields: ["name", "email"] }, required: true },
+      { name: "rating", label: "Đánh giá (1-5)", type: "number", required: true },
+      { name: "title", label: "Tiêu đề", type: "text", required: true },
+      { name: "content", label: "Nội dung", type: "textarea", required: true },
+      { name: "sortOrder", label: "Thứ tự", type: "number", required: true },
+      { name: "isVisible", label: "Hiển thị", type: "boolean", required: true },
+    ],
+  },
 ];
 
 export const RESOURCES_MAP = Object.fromEntries(

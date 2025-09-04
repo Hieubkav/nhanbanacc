@@ -16,6 +16,7 @@ import {
   Settings as SettingsIcon,
   ChevronsLeft,
   ChevronsRight,
+  Star as StarIcon,
 } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 
@@ -32,6 +33,7 @@ const resourceNav = [
   { href: "/dashboard/resources/posts", label: "Bài viết", icon: FileText },
   { href: "/dashboard/resources/faqs", label: "FAQ", icon: HelpCircle },
   { href: "/dashboard/resources/sliders", label: "Slider", icon: SlidersHorizontal },
+  { href: "/dashboard/resources/reviews", label: "Đánh giá", icon: StarIcon },
   { href: "/dashboard/resources/settings", label: "Cấu hình", icon: SettingsIcon },
 ] as const;
 

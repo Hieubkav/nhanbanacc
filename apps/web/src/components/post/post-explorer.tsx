@@ -28,6 +28,24 @@ export default function PostExplorer({ onOpenDetail }: { onOpenDetail: (id: stri
     });
   }, [list?.items]);
 
+  // Lấy tất cả liên kết ảnh của bài viết và ghép vào dữ liệu thẻ
+  const postImagesList = useQuery(api.post_images.list, { pageSize: 1000 } as any);
+
+  const postsWithImages = useMemo(() => {
+    const rows = (merged.length ? merged : list?.items) ?? [];
+    return rows.map((post: any) => {
+      // Ảnh ưu tiên: thumbnailId, sau đó đến các ảnh trong post_images theo sortOrder
+      const links = (postImagesList?.items || [])
+        .filter((pi: any) => String(pi.postId) === String(post._id))
+        .sort((a: any, b: any) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+      const imageIds = [post.thumbnailId, ...links.map((l: any) => l.imageId)]
+        .map((id: any) => (id ? String(id) : undefined))
+        .filter((id: any) => id && id !== "undefined");
+      const images = imageIds.length > 0 ? imageIds : undefined;
+      return { ...post, images };
+    });
+  }, [merged, list?.items, postImagesList?.items]);
+
   return (
     <section className="rounded-2xl border border-gray-200 bg-white/70 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-900/70 dark:border-gray-700">
       <div className="mb-6">
@@ -45,11 +63,13 @@ export default function PostExplorer({ onOpenDetail }: { onOpenDetail: (id: stri
       {/* Removed hardcoded content as per requirements */}
       
       <EntityCardGrid
-        items={merged.length ? merged : list?.items}
+        items={postsWithImages}
         getKey={(p: any) => String(p._id)}
         getTitle={(p: any) => p.title}
         getDescription={(p: any) => p.excerpt}
-        getBadge={(p: any) => (p.status ? String(p.status) : undefined)}
+        // Ẩn badge "published" cho sạch sẽ
+        getBadge={(p: any) => (p.status && String(p.status) !== "published" ? String(p.status) : undefined)}
+        getImages={(p: any) => p.images}
         onItemClick={(p: any) => onOpenDetail(String(p._id))}
       />
       
@@ -67,4 +87,3 @@ export default function PostExplorer({ onOpenDetail }: { onOpenDetail: (id: stri
     </section>
   );
 }
-
