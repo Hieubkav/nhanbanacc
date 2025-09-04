@@ -54,8 +54,8 @@ export const getWithDetails = query({
 
     // Lấy thông tin chi tiết của các hình ảnh
     const imageIds = productImages.map(pi => pi.imageId);
-    const images = imageIds.length > 0 
-      ? await ctx.db.getMany(imageIds as any) 
+    const images = imageIds.length > 0
+      ? (await Promise.all(imageIds.map(id => ctx.db.get(id)))).filter(Boolean)
       : [];
 
     // Sắp xếp hình ảnh theo sortOrder
