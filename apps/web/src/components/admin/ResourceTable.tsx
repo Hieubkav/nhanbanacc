@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { RESOURCES_MAP, apiOf, type ResourceConfig } from "@/config/resources";
 import { ImagePreviewThumb } from "@/components/admin/ImagePreviewThumb";
+import SettingsSingletonForm from "@/components/admin/SettingsSingletonForm";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -20,6 +21,14 @@ export default function ResourceTable({ resource }: Props) {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   const [sort, setSort] = useState(config?.defaultSort ?? { field: "_creationTime", direction: "desc" });
+
+  if (resource === "settings") {
+    return (
+      <div className="space-y-4">
+        <SettingsSingletonForm />
+      </div>
+    );
+  }
 
   const data = useQuery(mod.list, { q, page, pageSize, sort });
   const toggle = useMutation(mod.toggle);

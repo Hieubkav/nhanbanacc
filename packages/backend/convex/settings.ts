@@ -1,30 +1,49 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { listArgsValidator, applyFilters, applySort, paginate, matchQ, ensureUnique, findByField, buildSuggest, now } from "./lib/crud";
+import { now } from "./lib/crud";
 
 const TABLE = "settings" as const;
-const SEARCH_FIELDS = ["key", "value", "group", "label", "description", "type"] as const;
-const LABEL_FIELDS = ["label", "key"] as const;
-const UNIQUE_FIELDS = ["key"] as const;
 
-export const getById = query({ args: { id: v.id(TABLE) }, handler: async (ctx, { id }) => ctx.db.get(id) });
-export const getManyByIds = query({ args: { ids: v.array(v.id(TABLE)) }, handler: async (ctx, { ids }) => (await Promise.all(ids.map((id) => ctx.db.get(id)))).filter(Boolean) });
+// Shape phải khớp với schema.ts
+const fieldsShape = {
+  siteName: v.optional(v.string()),
+  slogan: v.optional(v.string()),
+  phone: v.optional(v.string()),
+  email: v.optional(v.string()),
+  address: v.optional(v.string()),
+  logoId: v.optional(v.id("images")),
+  faviconId: v.optional(v.id("images")),
+  seoDefaultTitle: v.optional(v.string()),
+  seoDefaultDescription: v.optional(v.string()),
+  socialFacebook: v.optional(v.string()),
+  socialYoutube: v.optional(v.string()),
+  socialTiktok: v.optional(v.string()),
+  uiPrimaryColor: v.optional(v.string()),
+} as const;
 
-export const list = query({ args: listArgsValidator, handler: async (ctx, args) => { const docs = await ctx.db.query(TABLE).collect(); let items = docs.filter((d) => matchQ(d, args.q, [...SEARCH_FIELDS] as any)); items = applyFilters(items, args.filters); items = applySort(items, args.sort); return paginate(items, args.page, args.pageSize, args.cursor); } });
-export const exists = query({ args: { field: v.string(), value: v.any(), excludeId: v.optional(v.id(TABLE)) }, handler: async (ctx, { field, value, excludeId }) => ({ exists: !!(await findByField(ctx, TABLE, field, value, excludeId)) }) });
-export const count = query({ args: { q: v.optional(v.string()), filters: listArgsValidator.filters! }, handler: async (ctx, args) => { const docs = await ctx.db.query(TABLE).collect(); const items = applyFilters(docs.filter((d) => matchQ(d, args.q, [...SEARCH_FIELDS] as any)), args.filters); return { total: items.length }; } });
-export const suggest = query({ args: { q: v.string(), limit: v.optional(v.number()) }, handler: async (ctx, { q, limit }) => { const docs = await ctx.db.query(TABLE).collect(); return buildSuggest(docs, q, [...LABEL_FIELDS] as any, limit ?? 10); } });
+export const getOne = query({
+  args: {},
+  handler: async (ctx) => {
+    const docs = await ctx.db.query(TABLE).collect();
+    return docs[0] ?? null;
+  },
+});
 
-export const create = mutation({ args: { dto: v.object({ key: v.string(), value: v.string(), group: v.optional(v.string()), label: v.optional(v.string()), description: v.optional(v.string()), type: v.string() }) }, handler: async (ctx, { dto }) => { await ensureUnique(ctx, TABLE, [...UNIQUE_FIELDS] as any, dto); const nowTs = now(); const id = await ctx.db.insert(TABLE, { ...dto, createdAt: nowTs, updatedAt: nowTs }); return ctx.db.get(id); } });
-export const update = mutation({ args: { id: v.id(TABLE), patch: v.object({ key: v.optional(v.string()), value: v.optional(v.string()), group: v.optional(v.string()), label: v.optional(v.string()), description: v.optional(v.string()), type: v.optional(v.string()) }) }, handler: async (ctx, { id, patch }) => { await ensureUnique(ctx, TABLE, [...UNIQUE_FIELDS] as any, patch, id); await ctx.db.patch(id, { ...patch, updatedAt: now() }); return ctx.db.get(id); } });
-export const guardedUpdate = mutation({ args: { id: v.id(TABLE), expectedUpdatedAt: v.number(), patch: v.object({ key: v.optional(v.string()), value: v.optional(v.string()), group: v.optional(v.string()), label: v.optional(v.string()), description: v.optional(v.string()), type: v.optional(v.string()) }) }, handler: async (ctx, { id, expectedUpdatedAt, patch }) => { const current = await ctx.db.get(id); if (!current) throw new Error("Không tìm thấy bản ghi"); if (current.updatedAt !== expectedUpdatedAt) throw new Error("Bản ghi đã bị cập nhật bởi phiên khác"); await ensureUnique(ctx, TABLE, [...UNIQUE_FIELDS] as any, patch, id); await ctx.db.patch(id, { ...patch, updatedAt: now() }); return ctx.db.get(id); } });
-export const deleteOne = mutation({ args: { id: v.id(TABLE) }, handler: async (ctx, { id }) => { await ctx.db.delete(id); return { success: true }; } });
-export const bulkUpdate = mutation({ args: { ids: v.array(v.id(TABLE)), patch: v.object({ key: v.optional(v.string()), value: v.optional(v.string()), group: v.optional(v.string()), label: v.optional(v.string()), description: v.optional(v.string()), type: v.optional(v.string()) }) }, handler: async (ctx, { ids, patch }) => { for (const id of ids) { await ensureUnique(ctx, TABLE, [...UNIQUE_FIELDS] as any, patch, id); await ctx.db.patch(id, { ...patch, updatedAt: now() }); } return { success: true, count: ids.length }; } });
-export const bulkDelete = mutation({ args: { ids: v.array(v.id(TABLE)) }, handler: async (ctx, { ids }) => { for (const id of ids) await ctx.db.delete(id); return { success: true, count: ids.length }; } });
-export const toggle = mutation({ args: { id: v.id(TABLE), field: v.string() }, handler: async () => { throw new Error("settings không có boolean toggle phù hợp"); } });
-export const reorder = mutation({ args: { id: v.id(TABLE), toIndex: v.optional(v.number()) }, handler: async () => { throw new Error("settings không hỗ trợ sortOrder/reorder"); } });
-export const publish = mutation({ args: { id: v.id(TABLE) }, handler: async () => { throw new Error("settings không có status"); } });
-export const unpublish = mutation({ args: { id: v.id(TABLE) }, handler: async () => { throw new Error("settings không có status"); } });
-export const clone = mutation({ args: { id: v.id(TABLE), overrides: v.optional(v.object({ key: v.optional(v.string()), value: v.optional(v.string()), group: v.optional(v.string()), label: v.optional(v.string()), description: v.optional(v.string()), type: v.optional(v.string()) })) }, handler: async (ctx, { id, overrides }) => { const src = await ctx.db.get(id); if (!src) throw new Error("Không tìm thấy bản ghi để clone"); const nowTs = now(); let key = overrides?.key ?? `${src.key}-copy`; let i = 1; while (await findByField(ctx, TABLE, "key", key)) { key = `${src.key}-copy${i}`; i++; } const dto = { key, value: overrides?.value ?? src.value, group: overrides?.group ?? src.group, label: overrides?.label ?? src.label, description: overrides?.description ?? src.description, type: overrides?.type ?? src.type, createdAt: nowTs, updatedAt: nowTs } as any; const newId = await ctx.db.insert(TABLE, dto); return ctx.db.get(newId); } });
-export const upsert = mutation({ args: { where: v.object({ field: v.string(), value: v.any() }), create: v.object({ key: v.string(), value: v.string(), group: v.optional(v.string()), label: v.optional(v.string()), description: v.optional(v.string()), type: v.string() }), update: v.object({ key: v.optional(v.string()), value: v.optional(v.string()), group: v.optional(v.string()), label: v.optional(v.string()), description: v.optional(v.string()), type: v.optional(v.string()) }) }, handler: async (ctx, { where, create, update }) => { const found = await findByField(ctx, TABLE, where.field, where.value); if (!found) { const nowTs = now(); const id = await ctx.db.insert(TABLE, { ...create, createdAt: nowTs, updatedAt: nowTs }); return ctx.db.get(id); } await ensureUnique(ctx, TABLE, [...UNIQUE_FIELDS] as any, update, found._id); await ctx.db.patch(found._id, { ...update, updatedAt: now() }); return ctx.db.get(found._id); } });
+export const saveOne = mutation({
+  args: { patch: v.object({ ...fieldsShape, siteName: v.optional(v.string()) }) },
+  handler: async (ctx, { patch }) => {
+    const docs = await ctx.db.query(TABLE).collect();
+    const ts = now();
+    if (docs.length === 0) {
+      if (!patch.siteName || !patch.siteName.trim()) {
+        throw new Error("Thiếu 'siteName' khi tạo bản ghi settings đầu tiên");
+      }
+      const id = await ctx.db.insert(TABLE, { ...(patch as any), createdAt: ts, updatedAt: ts });
+      return ctx.db.get(id);
+    }
+    const current = docs[0];
+    await ctx.db.patch(current._id, { ...(patch as any), updatedAt: ts });
+    return ctx.db.get(current._id);
+  },
+});
 

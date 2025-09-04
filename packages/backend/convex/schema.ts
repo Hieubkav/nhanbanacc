@@ -127,7 +127,7 @@ export default defineSchema({
     .index("by_isVisible", { fields: ["isVisible"] })
     .index("by_sortOrder", { fields: ["sortOrder"] }),
 
-  // Liên kết N–N: products ↔ images
+  // Liên kết N-N: products × images
   product_images: defineTable({
     productId: v.id("products"),
     imageId: v.id("images"),
@@ -175,7 +175,7 @@ export default defineSchema({
     .index("by_thumbnailId", { fields: ["thumbnailId"] })
     .index("by_sortOrder", { fields: ["sortOrder"] }),
 
-  // Liên kết N–N: posts ↔ images
+  // Liên kết N-N: posts × images
   post_images: defineTable({
     postId: v.id("posts"),
     imageId: v.id("images"),
@@ -214,19 +214,24 @@ export default defineSchema({
     .index("by_sortOrder", { fields: ["sortOrder"] }),
 
   // ================
-  // Settings (Cấu hình)
+  // Settings (singleton)
   // ================
   settings: defineTable({
-    key: v.string(),
-    value: v.string(), // nếu cần đa dạng kiểu: chuyển sang object JSON riêng
-    group: v.optional(v.string()),
-    label: v.optional(v.string()),
-    description: v.optional(v.string()),
-    type: v.string(),
+    siteName: v.string(),
+    slogan: v.optional(v.string()),
+    phone: v.optional(v.string()),
+    email: v.optional(v.string()),
+    address: v.optional(v.string()),
+    logoId: v.optional(v.id("images")),
+    faviconId: v.optional(v.id("images")),
+    seoDefaultTitle: v.optional(v.string()),
+    seoDefaultDescription: v.optional(v.string()),
+    socialFacebook: v.optional(v.string()),
+    socialYoutube: v.optional(v.string()),
+    socialTiktok: v.optional(v.string()),
+    uiPrimaryColor: v.optional(v.string()),
     createdAt: v.number(),
     updatedAt: v.number(),
-  })
-    .index("by_key", { fields: ["key"] })
-    .index("by_group", { fields: ["group"] })
-    .index("by_type", { fields: ["type"] }),
+  }),
 });
+
