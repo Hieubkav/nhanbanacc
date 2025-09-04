@@ -33,6 +33,46 @@ export const getManyByIds = query({
   },
 });
 
+// Hàm mới để lấy thông tin sản phẩm cùng với các phiên bản và hình ảnh
+export const getWithDetails = query({
+  args: { id: v.id(TABLE) },
+  handler: async (ctx, { id }) => {
+    const product = await ctx.db.get(id);
+    if (!product) return null;
+
+    // Lấy các phiên bản của sản phẩm
+    const variants = await ctx.db
+      .query("product_variants")
+      .filter((q) => q.eq(q.field("productId"), id))
+      .collect();
+
+    // Lấy các hình ảnh của sản phẩm
+    const productImages = await ctx.db
+      .query("product_images")
+      .filter((q) => q.eq(q.field("productId"), id))
+      .collect();
+
+    // Lấy thông tin chi tiết của các hình ảnh
+    const imageIds = productImages.map(pi => pi.imageId);
+    const images = imageIds.length > 0 
+      ? await ctx.db.getMany(imageIds as any) 
+      : [];
+
+    // Sắp xếp hình ảnh theo sortOrder
+    const sortedImages = [...images].sort((a, b) => {
+      const aPI = productImages.find(pi => pi.imageId === a?._id);
+      const bPI = productImages.find(pi => pi.imageId === b?._id);
+      return (aPI?.sortOrder ?? 0) - (bPI?.sortOrder ?? 0);
+    });
+
+    return {
+      ...product,
+      variants,
+      images: sortedImages
+    };
+  },
+});
+
 export const list = query({
   args: listArgsValidator,
   handler: async (ctx, args) => {

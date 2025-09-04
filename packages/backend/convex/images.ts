@@ -31,6 +31,26 @@ export const getManyByIds = query({
   },
 });
 
+// Hàm mới để lấy images theo danh sách imageIds
+export const listByIds = query({
+  args: { imageIds: v.array(v.id(TABLE)), ...listArgsValidator },
+  handler: async (ctx, args) => {
+    if (args.imageIds.length === 0) {
+      return { items: [], cursor: null, hasMore: false };
+    }
+    
+    const docs = await ctx.db
+      .query(TABLE)
+      .filter((q) => q.or(...args.imageIds.map(id => q.eq(q.field("_id"), id))))
+      .collect();
+    
+    let items = docs.filter((d) => matchQ(d, args.q, [...SEARCH_FIELDS] as any));
+    items = applyFilters(items, args.filters);
+    items = applySort(items, args.sort ?? { field: "sortOrder", direction: "asc" });
+    return paginate(items, args.page, args.pageSize, args.cursor);
+  },
+});
+
 export const list = query({
   args: listArgsValidator,
   handler: async (ctx, args) => {

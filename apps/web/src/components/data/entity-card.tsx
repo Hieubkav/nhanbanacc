@@ -1,28 +1,137 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { StorageImage } from "@/components/shared/storage-image";
 
 export type EntityCardProps = {
   title: string;
   description?: string;
   badge?: string;
+  // Thêm các props mới cho sản phẩm
+  variants?: Array<{
+    price: number;
+    originalPrice?: number;
+  }>;
+  images?: string[]; // Danh sách imageId
+  inStock?: boolean; // Thông tin tồn kho
+  stockQuantity?: number; // Số lượng tồn kho
   onClick?: () => void;
   className?: string;
 };
 
-export function EntityCard({ title, description, badge, onClick, className }: EntityCardProps) {
+export function EntityCard({ 
+  title, 
+  description, 
+  badge, 
+  variants,
+  images,
+  inStock,
+  stockQuantity,
+  onClick, 
+  className 
+}: EntityCardProps) {
+  // Tính giá thấp nhất từ các phiên bản
+  const lowestPrice = variants && variants.length > 0 
+    ? Math.min(...variants.map(v => v.price)) 
+    : undefined;
+    
+  // Tính giá gốc thấp nhất (nếu có)
+  const lowestOriginalPrice = variants && variants.length > 0 && variants.some(v => v.originalPrice)
+    ? Math.min(...variants.map(v => v.originalPrice || Infinity))
+    : undefined;
+    
+  // Tính phần trăm giảm giá
+  const discountPercent = lowestOriginalPrice && lowestPrice
+    ? Math.round(((lowestOriginalPrice - lowestPrice) / lowestOriginalPrice) * 100)
+    : 0;
+
   return (
     <button type="button" onClick={onClick} className={cn("text-left", className)}>
       <Card className="group relative h-full w-full cursor-pointer rounded-xl border border-gray-200 bg-white/80 p-5 transition-all duration-300 hover:shadow-lg hover:border-gold/60 dark:border-gray-700 dark:bg-gray-800/80 dark:hover:bg-gray-800">
+        {/* Hình ảnh sản phẩm */}
+        {images && images.length > 0 && images[0] && images[0] !== "undefined" ? (
+          <div className="relative mb-4 overflow-hidden rounded-lg">
+            <div className="relative h-48 w-full">
+              <StorageImage 
+                imageId={images[0]} 
+                alt={title} 
+                className="h-48 w-full"
+                imgClassName="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+            {/* Nhãn giảm giá */}
+            {discountPercent > 0 && (
+              <Badge className="absolute left-2 top-2 rounded-full bg-red-500 px-2 py-1 text-xs text-white">
+                -{discountPercent}%
+              </Badge>
+            )}
+          </div>
+        ) : (
+          <div className="mb-4 h-48 w-full rounded-lg bg-gray-200 dark:bg-gray-700" />
+        )}
+        
         <div className="flex items-start justify-between gap-3">
-          <h3 className="line-clamp-2 text-lg font-semibold leading-snug tracking-tight text-gray-900 dark:text-white">{title}</h3>
+          <h3 className="line-clamp-2 text-lg font-semibold leading-snug tracking-tight text-gray-900 dark:text-white">
+            {title}
+          </h3>
           {badge ? <Badge className="shrink-0 rounded-full px-3 py-1 text-xs bg-gold/10 text-gold dark:bg-gold/20 dark:text-gold">{badge}</Badge> : null}
         </div>
+        
         {description ? (
-          <p className="text-muted-foreground mt-3 line-clamp-3 text-sm dark:text-gray-300">{description}</p>
+          <p className="text-muted-foreground mt-3 line-clamp-3 text-sm dark:text-gray-300">
+            {description}
+          </p>
         ) : null}
+        
+        {/* Giá sản phẩm */}
+        <div className="mt-3">
+          {lowestPrice !== undefined ? (
+            <div className="flex items-center">
+              {lowestOriginalPrice && lowestOriginalPrice > lowestPrice ? (
+                <>
+                  <span className="text-lg font-bold text-red-600 dark:text-red-400">
+                    Từ {formatPrice(lowestPrice)}
+                  </span>
+                  <span className="ml-2 text-sm text-gray-500 line-through dark:text-gray-400">
+                    {formatPrice(lowestOriginalPrice)}
+                  </span>
+                </>
+              ) : (
+                <span className="text-lg font-bold text-gray-900 dark:text-white">
+                  Từ {formatPrice(lowestPrice)}
+                </span>
+              )}
+            </div>
+          ) : (
+            <span className="text-lg font-bold text-gray-900 dark:text-white">
+              Liên hệ
+            </span>
+          )}
+        </div>
+        
+        {/* Thông tin tồn kho */}
+        <div className="mt-2 text-sm">
+          {inStock !== undefined ? (
+            inStock ? (
+              <span className="text-green-600 dark:text-green-400">
+                Còn hàng {stockQuantity !== undefined && `(${stockQuantity})`}
+              </span>
+            ) : (
+              <span className="text-red-600 dark:text-red-400">Hết hàng</span>
+            )
+          ) : null}
+        </div>
+        
         <div className="absolute inset-0 rounded-xl border-2 border-transparent transition-all duration-300 group-hover:border-gold/30" />
       </Card>
     </button>
   );
+}
+
+// Hàm định dạng giá tiền
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
+  }).format(price);
 }

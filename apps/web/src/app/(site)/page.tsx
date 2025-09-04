@@ -32,10 +32,7 @@ export default function Home() {
               <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent ml-4 dark:via-gray-700"></div>
             </div>
             <div className="mb-6">
-              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
-                Khám phá bộ sưu tập sản phẩm độc đáo của chúng tôi, được tuyển chọn kỹ lưỡng để mang đến trải nghiệm tốt nhất cho bạn. 
-                Mỗi sản phẩm đều thể hiện sự tinh tế và chất lượng vượt trội.
-              </p>
+              {/* Hard coded content removed */}
             </div>
             <ProductExplorer onOpenDetail={(id) => setDetail({ kind: "product", id })} />
           </section>

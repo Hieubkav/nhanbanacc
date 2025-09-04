@@ -64,6 +64,48 @@ export default function ProductExplorer({ onOpenDetail }: { onOpenDetail: (id: s
     });
   }, [list?.items]);
 
+  // Fetch all product images and filter on client side
+  const productImagesList = useQuery(api.product_images.list, { pageSize: 1000 } as any);
+  
+  // Fetch all images and filter on client side
+  const imagesList = useQuery(api.images.list, { pageSize: 1000 } as any);
+
+  // Combine product data with images
+  const productsWithDetails = useMemo(() => {
+    if (!list?.items) return [];
+    
+    const productIds = (merged.length ? merged : list.items).map((p: any) => String(p._id));
+    
+    return (merged.length ? merged : list.items).map((product: any) => {
+      // Get images for this product
+      const productImageLinks = (productImagesList?.items || []).filter(
+        (pi: any) => String(pi.productId) === String(product._id)
+      );
+      
+      // Get image details and sort by sortOrder
+      const productImages = productImageLinks
+        .map((pi: any) => {
+          const image = (imagesList?.items || []).find(
+            (img: any) => String(img._id) === String(pi.imageId)
+          );
+          return image ? { ...image, sortOrder: pi.sortOrder } : null;
+        })
+        .filter(Boolean)
+        .sort((a: any, b: any) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+      
+      // Extract imageIds or use undefined if no images
+      const imageIds = productImages
+        .map((img: any) => String(img?._id))
+        .filter((id: string) => id && id !== "undefined");
+      const images = imageIds.length > 0 ? imageIds : undefined;
+      
+      return {
+        ...product,
+        images,
+      };
+    });
+  }, [list, merged, productImagesList, imagesList]);
+
   return (
     <section className="rounded-2xl border border-gray-200 bg-white/70 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-900/70 dark:border-gray-700">
       <div className="mb-6 grid gap-4 sm:grid-cols-1 md:grid-cols-4">
@@ -107,11 +149,12 @@ export default function ProductExplorer({ onOpenDetail }: { onOpenDetail: (id: s
       </div>
 
       <EntityCardGrid
-        items={merged.length ? merged : list?.items}
+        items={productsWithDetails}
         getKey={(p: any) => String(p._id)}
         getTitle={(p: any) => p.name}
         getDescription={(p: any) => p.shortDesc ?? p.description}
         getBadge={(p: any) => (p.status ? String(p.status) : undefined)}
+        getImages={(p: any) => p.images}
         onItemClick={(p: any) => onOpenDetail(String(p._id))}
       />
 

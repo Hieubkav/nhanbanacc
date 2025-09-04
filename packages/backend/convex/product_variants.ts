@@ -32,6 +32,26 @@ export const getManyByIds = query({
   },
 });
 
+// Hàm mới để lấy variants theo danh sách productIds
+export const listByProductIds = query({
+  args: { productIds: v.array(v.id("products")), ...listArgsValidator },
+  handler: async (ctx, args) => {
+    if (args.productIds.length === 0) {
+      return { items: [], cursor: null, hasMore: false };
+    }
+    
+    const docs = await ctx.db
+      .query(TABLE)
+      .filter((q) => q.or(...args.productIds.map(id => q.eq(q.field("productId"), id))))
+      .collect();
+    
+    let items = docs.filter((d) => matchQ(d, args.q, [...SEARCH_FIELDS] as any));
+    items = applyFilters(items, args.filters);
+    items = applySort(items, args.sort ?? { field: "sortOrder", direction: "asc" });
+    return paginate(items, args.page, args.pageSize, args.cursor);
+  },
+});
+
 export const list = query({
   args: listArgsValidator,
   handler: async (ctx, args) => {
