@@ -30,9 +30,9 @@ export default function SiteLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClerkProvider>
           <Providers>
-            <div className="grid grid-rows-[auto_1fr] h-svh">
+            <div className="flex min-h-screen flex-col">
               <Navbar />
-              {children}
+              <main className="flex-1">{children}</main>
             </div>
           </Providers>
         </ClerkProvider>

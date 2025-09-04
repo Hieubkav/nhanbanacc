@@ -6,6 +6,7 @@ import { api } from "@nhanbanacc/backend/convex/_generated/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { EntityCardGrid } from "@/components/data/entity-card-grid";
+import { SearchIcon, FilterIcon } from "lucide-react";
 
 type SortKey = "name_asc" | "name_desc" | "updated_desc" | "updated_asc" | "sortOrder_asc";
 
@@ -64,13 +65,24 @@ export default function ProductExplorer({ onOpenDetail }: { onOpenDetail: (id: s
   }, [list?.items]);
 
   return (
-    <section className="rounded-xl border p-4">
-      <div className="mb-3 grid gap-2 sm:grid-cols-4">
-        <div className="sm:col-span-2">
-          <Input placeholder="Tìm theo tên sản phẩm" value={q} onChange={(e) => setQ(e.target.value)} />
+    <section className="rounded-2xl border bg-white/50 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-900/50">
+      <div className="mb-6 grid gap-3 sm:grid-cols-1 md:grid-cols-4">
+        <div className="relative md:col-span-2">
+          <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+          <Input 
+            placeholder="Tìm theo tên sản phẩm" 
+            value={q} 
+            onChange={(e) => setQ(e.target.value)} 
+            className="pl-10"
+          />
         </div>
-        <div>
-          <select className="w-full rounded-md border bg-white px-3 py-2 text-sm" value={categoryId} onChange={(e) => setCategoryId(e.target.value as any)}>
+        <div className="relative">
+          <FilterIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+          <select 
+            className="w-full rounded-lg border bg-white py-2 pl-10 pr-3 text-sm shadow-sm dark:bg-gray-800" 
+            value={categoryId} 
+            onChange={(e) => setCategoryId(e.target.value as any)}
+          >
             <option value="all">Tất cả danh mục</option>
             {categories?.items?.map((c: any) => (
               <option key={String(c._id)} value={String(c._id)}>
@@ -80,7 +92,11 @@ export default function ProductExplorer({ onOpenDetail }: { onOpenDetail: (id: s
           </select>
         </div>
         <div>
-          <select className="w-full rounded-md border bg-white px-3 py-2 text-sm" value={sort} onChange={(e) => setSort(e.target.value as SortKey)}>
+          <select 
+            className="w-full rounded-lg border bg-white py-2 px-3 text-sm shadow-sm dark:bg-gray-800" 
+            value={sort} 
+            onChange={(e) => setSort(e.target.value as SortKey)}
+          >
             <option value="sortOrder_asc">Nổi bật</option>
             <option value="updated_desc">Mới cập nhật</option>
             <option value="name_asc">Tên (A→Z)</option>
@@ -99,9 +115,13 @@ export default function ProductExplorer({ onOpenDetail }: { onOpenDetail: (id: s
         onItemClick={(p: any) => onOpenDetail(String(p._id))}
       />
 
-      <div className="mt-4 flex justify-center">
+      <div className="mt-6 flex justify-center">
         {list?.hasMore ? (
-          <Button variant="secondary" onClick={() => setPage((p) => p + 1)}>
+          <Button 
+            variant="outline" 
+            onClick={() => setPage((p) => p + 1)}
+            className="rounded-full px-6"
+          >
             Tải thêm
           </Button>
         ) : null}

@@ -19,15 +19,44 @@ export default function Home() {
   const [detail, setDetail] = useState<{ kind: "product" | "post"; id: string } | null>(null);
 
   return (
-    <div className="bg-white">
-      <div className="container mx-auto max-w-6xl px-4 py-6">
-        <HeroSlider />
-        <div className="mt-2 text-right text-xs text-muted-foreground">API: {healthCheck === undefined ? "Checking..." : healthCheck === "OK" ? "Connected" : "Error"}</div>
+    <div className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 min-h-screen">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="container mx-auto max-w-6xl px-4 py-6">
+          <HeroSlider />
+          <div className="mt-2 text-right text-xs text-muted-foreground">API: {healthCheck === undefined ? "Checking..." : healthCheck === "OK" ? "Connected" : "Error"}</div>
+        </div>
+      </div>
 
-        <div className="mt-8 grid gap-8">
-          <ProductExplorer onOpenDetail={(id) => setDetail({ kind: "product", id })} />
-          <PostExplorer onOpenDetail={(id) => setDetail({ kind: "post", id })} />
-          <FAQSection />
+      {/* Main Content */}
+      <div className="container mx-auto max-w-6xl px-4 py-8">
+        <div className="space-y-12">
+          {/* Products Section */}
+          <section className="animate-fade-in-up">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Sản Phẩm Nổi Bật</h2>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-200 to-transparent ml-4 dark:via-gray-700"></div>
+            </div>
+            <ProductExplorer onOpenDetail={(id) => setDetail({ kind: "product", id })} />
+          </section>
+
+          {/* Posts Section */}
+          <section className="animate-fade-in-up animation-delay-200">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Bài Viết Mới Nhất</h2>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-200 to-transparent ml-4 dark:via-gray-700"></div>
+            </div>
+            <PostExplorer onOpenDetail={(id) => setDetail({ kind: "post", id })} />
+          </section>
+
+          {/* FAQ Section */}
+          <section className="animate-fade-in-up animation-delay-400">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Câu Hỏi Thường Gặp</h2>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-200 to-transparent ml-4 dark:via-gray-700"></div>
+            </div>
+            <FAQSection />
+          </section>
         </div>
       </div>
 

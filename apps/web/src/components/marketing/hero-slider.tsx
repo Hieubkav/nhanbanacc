@@ -21,21 +21,23 @@ export default function HeroSlider() {
   if (!cur) return null;
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-b from-yellow-50/40 to-white">
-      <div className="relative h-[320px] w-full sm:h-[460px]">
+    <section className="relative overflow-hidden rounded-3xl border bg-gradient-to-br from-primary/5 to-primary/10 shadow-xl dark:from-primary/10 dark:to-primary/5">
+      <div className="relative h-[320px] w-full sm:h-[480px]">
         {cur.imageId ? (
-          <StorageImage imageId={String(cur.imageId)} alt={cur.title ?? "Slide"} />
+          <StorageImage imageId={String(cur.imageId)} alt={cur.title ?? "Slide"} className="object-cover" />
         ) : (
           <div className="bg-gradient-to-br from-yellow-50 to-white absolute inset-0" />
         )}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 to-black/10" />
-        <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-          <div className="max-w-3xl text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]">
-            <h1 className="text-3xl font-bold sm:text-5xl"><span className="text-yellow-400">{cur.title ?? "Khám phá ngay hôm nay"}</span></h1>
-            {cur.subtitle ? <p className="mt-2 text-sm sm:text-lg">{cur.subtitle}</p> : null}
-            <div className="mt-5">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10">
+          <div className="max-w-3xl text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+            <h1 className="text-3xl font-extrabold sm:text-5xl md:text-6xl animate-fade-in-up">
+              <span className="text-yellow-400">{cur.title ?? "Khám phá ngay hôm nay"}</span>
+            </h1>
+            {cur.subtitle ? <p className="mt-3 text-sm sm:text-lg md:text-xl animate-fade-in-up animation-delay-200">{cur.subtitle}</p> : null}
+            <div className="mt-6 animate-fade-in-up animation-delay-400">
               {cur.buttonLink ? (
-                <Button asChild>
+                <Button asChild size="lg" className="rounded-full px-8 py-6 text-base font-semibold shadow-lg hover:shadow-xl transition-all">
                   <a href={cur.buttonLink} target="_blank" rel="noreferrer">
                     {cur.buttonText ?? "Xem chi tiết"}
                   </a>
@@ -46,13 +48,13 @@ export default function HeroSlider() {
         </div>
       </div>
       {/* Dots */}
-      <div className="flex items-center gap-2 p-3">
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-2">
         {items.map((_: any, idx: number) => (
           <button
             key={idx}
             onClick={() => setI(idx)}
             aria-label={`Slide ${idx + 1}`}
-            className={"h-2 w-2 rounded-full transition " + (idx === i ? "bg-yellow-500" : "bg-zinc-300/70 hover:bg-zinc-400")}
+            className={"h-3 w-3 rounded-full transition-all duration-300 " + (idx === i ? "bg-yellow-400 w-6" : "bg-white/50 hover:bg-white/80")}
           />)
         )}
       </div>
