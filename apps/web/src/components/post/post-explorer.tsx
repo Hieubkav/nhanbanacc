@@ -29,18 +29,26 @@ export default function PostExplorer({ onOpenDetail }: { onOpenDetail: (id: stri
   }, [list?.items]);
 
   return (
-    <section className="rounded-2xl border bg-white/50 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-900/50">
+    <section className="rounded-2xl border border-gray-200 bg-white/70 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-900/70 dark:border-gray-700">
       <div className="mb-6">
         <div className="relative">
-          <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+          <SearchIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
           <Input 
             placeholder="Tìm theo tiêu đề bài viết" 
             value={q} 
             onChange={(e) => setQ(e.target.value)} 
-            className="pl-10"
+            className="pl-10 h-12 rounded-xl border-gray-300 focus:border-gold focus:ring-gold"
           />
         </div>
       </div>
+      
+      <div className="mb-4">
+        <p className="text-gray-600 dark:text-gray-300">
+          Khám phá các bài viết chuyên sâu, hướng dẫn sử dụng và tin tức mới nhất từ đội ngũ của chúng tôi. 
+          Luôn cập nhật những thông tin hữu ích để bạn không bỏ lỡ bất kỳ điều gì quan trọng.
+        </p>
+      </div>
+      
       <EntityCardGrid
         items={merged.length ? merged : list?.items}
         getKey={(p: any) => String(p._id)}
@@ -49,12 +57,13 @@ export default function PostExplorer({ onOpenDetail }: { onOpenDetail: (id: stri
         getBadge={(p: any) => (p.status ? String(p.status) : undefined)}
         onItemClick={(p: any) => onOpenDetail(String(p._id))}
       />
-      <div className="mt-6 flex justify-center">
+      
+      <div className="mt-8 flex justify-center">
         {list?.hasMore ? (
           <Button 
             variant="outline" 
             onClick={() => setPage((p) => p + 1)}
-            className="rounded-full px-6"
+            className="rounded-full px-8 py-3 border-2 border-gold text-gold hover:bg-gold/10 dark:border-gold dark:text-gold dark:hover:bg-gold/20"
           >
             Tải thêm
           </Button>

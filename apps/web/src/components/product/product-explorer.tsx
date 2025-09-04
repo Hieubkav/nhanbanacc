@@ -65,21 +65,21 @@ export default function ProductExplorer({ onOpenDetail }: { onOpenDetail: (id: s
   }, [list?.items]);
 
   return (
-    <section className="rounded-2xl border bg-white/50 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-900/50">
-      <div className="mb-6 grid gap-3 sm:grid-cols-1 md:grid-cols-4">
+    <section className="rounded-2xl border border-gray-200 bg-white/70 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-900/70 dark:border-gray-700">
+      <div className="mb-6 grid gap-4 sm:grid-cols-1 md:grid-cols-4">
         <div className="relative md:col-span-2">
-          <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+          <SearchIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
           <Input 
             placeholder="Tìm theo tên sản phẩm" 
             value={q} 
             onChange={(e) => setQ(e.target.value)} 
-            className="pl-10"
+            className="pl-10 h-12 rounded-xl border-gray-300 focus:border-gold focus:ring-gold"
           />
         </div>
         <div className="relative">
-          <FilterIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+          <FilterIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
           <select 
-            className="w-full rounded-lg border bg-white py-2 pl-10 pr-3 text-sm shadow-sm dark:bg-gray-800" 
+            className="w-full rounded-xl border border-gray-300 bg-white py-3 pl-10 pr-4 text-sm shadow-sm focus:border-gold focus:ring-gold dark:bg-gray-800" 
             value={categoryId} 
             onChange={(e) => setCategoryId(e.target.value as any)}
           >
@@ -93,7 +93,7 @@ export default function ProductExplorer({ onOpenDetail }: { onOpenDetail: (id: s
         </div>
         <div>
           <select 
-            className="w-full rounded-lg border bg-white py-2 px-3 text-sm shadow-sm dark:bg-gray-800" 
+            className="w-full rounded-xl border border-gray-300 bg-white py-3 px-4 text-sm shadow-sm focus:border-gold focus:ring-gold dark:bg-gray-800" 
             value={sort} 
             onChange={(e) => setSort(e.target.value as SortKey)}
           >
@@ -115,12 +115,12 @@ export default function ProductExplorer({ onOpenDetail }: { onOpenDetail: (id: s
         onItemClick={(p: any) => onOpenDetail(String(p._id))}
       />
 
-      <div className="mt-6 flex justify-center">
+      <div className="mt-8 flex justify-center">
         {list?.hasMore ? (
           <Button 
             variant="outline" 
             onClick={() => setPage((p) => p + 1)}
-            className="rounded-full px-6"
+            className="rounded-full px-8 py-3 border-2 border-gold text-gold hover:bg-gold/10 dark:border-gold dark:text-gold dark:hover:bg-gold/20"
           >
             Tải thêm
           </Button>

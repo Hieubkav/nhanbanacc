@@ -9,11 +9,11 @@ export default function FAQSection() {
   const items = faqs?.items ?? [];
   if (!faqs) {
     return (
-      <section className="rounded-2xl border bg-white/50 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-900/50">
-        <div className="h-6 w-40 animate-pulse rounded bg-muted" />
-        <div className="mt-6 space-y-4">
+      <section className="rounded-2xl border border-gray-200 bg-white/70 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-900/70 dark:border-gray-700">
+        <div className="h-8 w-48 animate-pulse rounded bg-muted" />
+        <div className="mt-8 space-y-6">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-16 w-full animate-pulse rounded-lg bg-muted/50" />
+            <div key={i} className="h-20 w-full animate-pulse rounded-lg bg-muted/50" />
           ))}
         </div>
       </section>
@@ -22,16 +22,22 @@ export default function FAQSection() {
   if (items.length === 0) return null;
 
   return (
-    <section className="rounded-2xl border bg-white/50 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-900/50">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Câu hỏi thường gặp</h2>
-      <div className="mt-6 space-y-4">
+    <section className="rounded-2xl border border-gray-200 bg-white/70 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-900/70 dark:border-gray-700">
+      <div className="mb-4">
+        <p className="text-gray-600 dark:text-gray-300">
+          Tìm câu trả lời cho những thắc mắc phổ biến của khách hàng. 
+          Nếu bạn không tìm thấy câu trả lời mong muốn, đừng ngần ngại liên hệ với chúng tôi.
+        </p>
+      </div>
+      
+      <div className="mt-8 space-y-4">
         {items.map((f: any) => (
-          <details key={String(f._id)} className="group rounded-lg border bg-white/50 p-4 transition-all hover:bg-white/80 dark:bg-gray-800/50 dark:hover:bg-gray-800/80">
-            <summary className="marker:content-none flex cursor-pointer items-center justify-between gap-2 text-left font-medium text-gray-900 dark:text-white">
-              <span>{f.question}</span>
-              <ChevronDownIcon className="h-5 w-5 text-yellow-500 transition-transform duration-300 group-open:rotate-180" />
+          <details key={String(f._id)} className="group rounded-xl border border-gray-200 bg-white/50 p-5 transition-all hover:bg-white/80 dark:border-gray-700 dark:bg-gray-800/50 dark:hover:bg-gray-800/80">
+            <summary className="marker:content-none flex cursor-pointer items-center justify-between gap-4 text-left font-medium text-gray-900 dark:text-white">
+              <span className="text-lg">{f.question}</span>
+              <ChevronDownIcon className="h-6 w-6 text-gold transition-transform duration-300 group-open:rotate-180" />
             </summary>
-            <div className="text-muted-foreground mt-3 text-sm leading-relaxed dark:text-gray-300">{f.answer}</div>
+            <div className="text-muted-foreground mt-4 text-base leading-relaxed dark:text-gray-300">{f.answer}</div>
           </details>
         ))}
       </div>
