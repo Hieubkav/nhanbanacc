@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../../index.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Providers from "@/components/providers";
-import Header from "@/components/header";
+import Navbar from "@/components/site/navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +31,7 @@ export default function SiteLayout({
         <ClerkProvider>
           <Providers>
             <div className="grid grid-rows-[auto_1fr] h-svh">
-              <Header />
+              <Navbar />
               {children}
             </div>
           </Providers>
@@ -40,4 +40,3 @@ export default function SiteLayout({
     </html>
   );
 }
-

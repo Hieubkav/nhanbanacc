@@ -1,47 +1,54 @@
 "use client";
+import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@nhanbanacc/backend/convex/_generated/api";
-
-const TITLE_TEXT = `
- ██████╗ ███████╗████████╗████████╗███████╗██████╗
- ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
- ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
- ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
- ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
- ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
-
- ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
- ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-    ██║       ███████╗   ██║   ███████║██║     █████╔╝
-    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
-    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
- `;
+import { SearchOverlay } from "@/components/search/search-overlay";
+import { SpeedDial } from "@/components/shared/speed-dial";
+import { EntityDetailDialog } from "@/components/data/entity-detail-dialog";
+import { useSound } from "@/lib/use-sound";
+import HeroSlider from "@/components/marketing/hero-slider";
+import ProductExplorer from "@/components/product/product-explorer";
+import PostExplorer from "@/components/post/post-explorer";
+import FAQSection from "@/components/faq/faq";
+import Footer from "@/components/site/footer";
 
 export default function Home() {
-	const healthCheck = useQuery(api.healthCheck.get);
+  const { beep } = useSound();
+  const healthCheck = useQuery(api.healthCheck.get);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [detail, setDetail] = useState<{ kind: "product" | "post"; id: string } | null>(null);
 
-	return (
-		<div className="container mx-auto max-w-3xl px-4 py-2">
-			<pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
-			<div className="grid gap-6">
-				<section className="rounded-lg border p-4">
-					<h2 className="mb-2 font-medium">API Status</h2>
-					<div className="flex items-center gap-2">
-						<div
-							className={`h-2 w-2 rounded-full ${healthCheck === "OK" ? "bg-green-500" : healthCheck === undefined ? "bg-orange-400" : "bg-red-500"}`}
-						/>
-						<span className="text-sm text-muted-foreground">
-							{healthCheck === undefined
-								? "Checking..."
-								: healthCheck === "OK"
-									? "Connected"
-									: "Error"}
-						</span>
-					</div>
-				</section>
-			</div>
-		</div>
-	);
+  return (
+    <div className="bg-white">
+      <div className="container mx-auto max-w-6xl px-4 py-6">
+        <HeroSlider />
+        <div className="mt-2 text-right text-xs text-muted-foreground">API: {healthCheck === undefined ? "Checking..." : healthCheck === "OK" ? "Connected" : "Error"}</div>
+
+        <div className="mt-8 grid gap-8">
+          <ProductExplorer onOpenDetail={(id) => setDetail({ kind: "product", id })} />
+          <PostExplorer onOpenDetail={(id) => setDetail({ kind: "post", id })} />
+          <FAQSection />
+        </div>
+      </div>
+
+      <Footer />
+
+      {/* Overlays */}
+      <SearchOverlay open={searchOpen} onOpenChange={(o) => { setSearchOpen(o); if (!o) beep(); }} onSelect={(kind, id) => setDetail({ kind, id })} />
+      {detail ? (
+        <EntityDetailDialog
+          open={true}
+          onOpenChange={(o) => {
+            if (!o) setDetail(null);
+          }}
+          kind={detail.kind}
+          id={detail.id}
+        />
+      ) : null}
+
+      {/* Speed Dial */}
+      <SpeedDial onOpenSearch={() => setSearchOpen(true)} />
+    </div>
+  );
 }
 
