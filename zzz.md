@@ -1,0 +1,1 @@
+Ảnh trong phần bài viết sao không hiện => với cả popup cũng quá tệ quá xấu quá ít thông tin => hãy tham khảo pop úp của sản phẩm đi vì nó đa dạng đẹp => lưu ý bài viết thì phải có popup phù hợp và đẹp mắt chuẩn v0.dev nhé

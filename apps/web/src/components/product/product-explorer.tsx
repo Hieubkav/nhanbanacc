@@ -64,6 +64,29 @@ export default function ProductExplorer({ onOpenDetail }: { onOpenDetail: (id: s
     });
   }, [list?.items]);
 
+  // Lấy danh sách biến thể theo các productIds hiện có để tính giá "Từ x"
+  const productIds = useMemo(() => {
+    const arr = (merged.length ? merged : list?.items) ?? [];
+    return arr.map((p: any) => p._id).filter(Boolean);
+  }, [merged, list?.items]);
+
+  const variantsList = useQuery(
+    api.product_variants.listByProductIds,
+    // Khi chưa có ids thì truyền mảng rỗng để hook ổn định
+    { productIds: (productIds as any) ?? [], pageSize: 1000 } as any
+  );
+
+  const variantsByProductId = useMemo(() => {
+    const map: Record<string, Array<{ price: number; originalPrice?: number }>> = {};
+    const items = variantsList?.items ?? [];
+    for (const v of items as any[]) {
+      const key = String(v.productId);
+      if (!map[key]) map[key] = [];
+      map[key].push({ price: v.price, originalPrice: v.originalPrice });
+    }
+    return map;
+  }, [variantsList?.items]);
+
   // Fetch all product images and filter on client side
   const productImagesList = useQuery(api.product_images.list, { pageSize: 1000 } as any);
   
@@ -153,7 +176,10 @@ export default function ProductExplorer({ onOpenDetail }: { onOpenDetail: (id: s
         getKey={(p: any) => String(p._id)}
         getTitle={(p: any) => p.name}
         getDescription={(p: any) => p.shortDesc ?? p.description}
-        getBadge={(p: any) => (p.status ? String(p.status) : undefined)}
+        // Ẩn badge khi trạng thái là "published" để không hiện chữ này ở danh sách nổi bật
+        getBadge={(p: any) => (p.status && String(p.status) !== "published" ? String(p.status) : undefined)}
+        // Cung cấp variants để thẻ hiển thị giá dạng "Từ x VND"
+        getVariants={(p: any) => variantsByProductId[String(p._id)]}
         getImages={(p: any) => p.images}
         onItemClick={(p: any) => onOpenDetail(String(p._id))}
       />
@@ -172,4 +198,3 @@ export default function ProductExplorer({ onOpenDetail }: { onOpenDetail: (id: s
     </section>
   );
 }
-
