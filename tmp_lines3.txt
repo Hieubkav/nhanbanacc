@@ -1,0 +1,48 @@
+null || String(v).trim() === "";
+        if (isMissing) missing.push(f.label);
+      }
+      if (missing.length) {
+        toast.error(`Thiếu trường bắt buộc: ${missing.join(", ")}`);
+        return;
+      }
+
+      if (isEdit) {
+        await update({ id, patch: dto });
+      } else {
+        await create({ dto });
+      }
+      router.push(`/dashboard/resources/${resource}`);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Lỗi khi lưu dữ liệu");
+    }
+  };
+
+  if (!config) return <div>Resource không tồn tại</div>;
+
+  if (isEdit && loading) {
+    return <div className="p-2 text-sm text-muted-foreground">Đang tải dữ liệu...</div>;
+  }
+
+  return (
+    <form className="space-y-4" onSubmit={onSubmit}>
+      {fields.map((f) => (
+        <div key={f.name} className="grid gap-2">
+          <Label>{f.label}</Label>
+          <FieldControl
+            resource={resource}
+            field={f}
+            value={form[f.name]}
+            form={form}
+            onChange={(v) =>
+              setForm((s) => {
+                const next: any = { ...s, [f.name]: v };
+                // T? ??ng c?p nh?t slug theo name cho ??n khi user t?nh s?a slug
+                if (
+                  (f.name === "name" || f.name === "title") &&
+                  fields.some((x) => x.name === "slug")
+                ) {
+                  const prevAuto = slugify(String(s.name ?? s.title ?? ""));
+                  const slugEmpty = !s.slug || String(s.slug).trim() === "";
+                  const slugWasAuto = s.slug === prevAuto;
+                  if (slugEmpty || slugWasAuto) {
+             

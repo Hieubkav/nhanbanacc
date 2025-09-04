@@ -9,6 +9,7 @@ import { RESOURCES_MAP, apiOf, type ResourceConfig } from "@/config/resources";
 import { ImagePreviewThumb } from "@/components/admin/ImagePreviewThumb";
 import SettingsSingletonForm from "@/components/admin/SettingsSingletonForm";
 import { cn } from "@/lib/utils";
+import FkLabel from "@/components/shared/fk-label";
 
 type Props = {
   resource: string;
@@ -49,7 +50,22 @@ export default function ResourceTable({ resource }: Props) {
         ),
       ];
     }
-    return config.listColumns;
+    // Tự động render label cho các cột là FK nếu được định nghĩa trong fields
+    const fieldLookup = new Map(
+      (config.editFields ?? config.createFields).map((f: any) => [f.name, f])
+    );
+    return config.listColumns.map((c: any) => {
+      const f = fieldLookup.get(c.key);
+      if (f?.type === "fk" && f.fk?.resource) {
+        return {
+          ...c,
+          render: (row: any) => (
+            <FkLabel resource={f.fk.resource} id={row[c.key]} labelFields={f.fk.labelFields} fallbackId />
+          ),
+        };
+      }
+      return c;
+    });
   }, [config.listColumns, resource]);
 
   return (

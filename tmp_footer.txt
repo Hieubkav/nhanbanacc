@@ -1,48 +1,44 @@
-1	"use client";
-2	
-3	import { useQuery } from "convex/react";
-4	import { api } from "@nhanbanacc/backend/convex/_generated/api";
-5	import { Phone, Mail } from "lucide-react";
-6	
-7	export default function Footer() {
-8	  const s = useQuery(api.settings.getOne);
-9	  return (
-10	    <footer className="border-t bg-gradient-to-r from-gray-900 to-gray-800 text-white">
-11	      <div className="container mx-auto px-4 py-12 grid gap-8 sm:grid-cols-1 md:grid-cols-3">
-12	        <div className="md:col-span-1">
-13	          <div className="text-2xl font-bold mb-3">{s?.siteName ?? "NhanBanACC"}</div>
-14	          <p className="text-gray-300 mb-6">{s?.slogan ?? "Giải pháp nhanh, gọn, hiệu quả"}</p>
-15	          <div className="space-y-3">
-16	            {s?.address ? <div className="flex items-start gap-3">📍 <span>{s.address}</span></div> : null}
-17	            {s?.phone ? <div className="flex items-start gap-3"> <Phone className="h-5 w-5" /> <span>{s.phone}</span></div> : null}
-18	            {s?.email ? <div className="flex items-start gap-3"> <Mail className="h-5 w-5" /> <span>{s.email}</span></div> : null}
-19	          </div>
-20	        </div>
-21	        
-22	        <div className="md:col-span-1">
-23	          <h3 className="text-xl font-semibold mb-6">Liên kết nhanh</h3>
-24	          <ul className="space-y-3">
-25	            <li><a href="#products" className="text-gray-300 hover:text-gold transition-colors">Sản phẩm</a></li>
-26	            <li><a href="#posts" className="text-gray-300 hover:text-gold transition-colors">Bài viết</a></li>
-27	            <li><a href="#faq" className="text-gray-300 hover:text-gold transition-colors">Câu hỏi thường gặp</a></li>
-28	          </ul>
-29	        </div>
-30	        
-31	        <div className="md:col-span-1">
-32	          <h3 className="text-xl font-semibold mb-6">Liên hệ</h3>
-33	          <div className="space-y-3">
-34	            {s?.address ? <div className="flex items-start gap-3">📍 <span>{s.address}</span></div> : null}
-35	            {s?.phone ? <div className="flex items-start gap-3"> <Phone className="h-5 w-5" /> <span>{s.phone}</span></div> : null}
-36	            {s?.email ? <div className="flex items-start gap-3"> <Mail className="h-5 w-5" /> <span>{s.email}</span></div> : null}
-37	          </div>
-38	        </div>
-39	      </div>
-40	      <div className="border-t border-gray-700">
-41	        <div className="container mx-auto px-4 py-6 text-center text-sm text-gray-400">
-42	          © {new Date().getFullYear()} {s?.siteName ?? "NhanBanACC"}. All rights reserved.
-43	        </div>
-44	      </div>
-45	    </footer>
-46	  );
-47	}
-48	
+case "fk": {
+      const fkMod = apiOf(field.fk!.resource);
+      const [q, setQ] = useState("");
+      const [open, setOpen] = useState(false);
+      const suggest = useQuery(fkMod.suggest, { q: q ?? "", limit: 8 });
+      return (
+        <div className="relative space-y-2 group">
+          {field.fk!.resource === "images" && (
+            <div className="flex items-center gap-3" onClick={() => setOpen(false)}>
+              <ImagePreviewThumb id={value} size={56} />
+              <div className="text-xs text-muted-foreground min-w-0">
+                {value ? (
+                  <div className="flex items-center gap-2">
+                    <span className="truncate">ID: {String(value)}</span>
+                    <Button type="button" variant="outline" size="sm" onClick={() => onChange(undefined)}>Bỏ chọn</Button>
+                    <a href="/dashboard/resources/images/new" target="_blank" className="text-xs underline">Tải ảnh mới</a>
+                  </div>
+                ) : (
+                  <div className="text-xs">Chưa chọn ảnh thumbnail</div>
+                )}
+              </div>
+            </div>
+          )}
+          <Input value={q} placeholder={`Tìm ${field.label.toLowerCase()}...`} onChange={(e) => setQ(e.target.value)} />
+          {suggest && suggest.length > 0 && (
+            <div className="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-md border bg-popover p-1 text-sm shadow hidden group-focus-within:block">
+              {suggest.map((s: any) => (
+                <button
+                  type="button"
+                  key={String(s.id)}
+                  className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-left hover:bg-accent"
+                  onMouseDown={(e) => { e.preventDefault(); onChange(s.id); setQ(s.label); }}
+                >
+                  {field.fk!.resource === "images" && <ImagePreviewThumb id={s.id} size={28} />}
+                  <span className="truncate">{s.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+          {value && <div className="mt-1 text-xs text-muted-foreground">Đã chọn: {String(value)}</div>}
+        </div>
+      );
+    }
+    

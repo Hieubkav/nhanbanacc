@@ -11,6 +11,7 @@ import { RESOURCES_MAP, apiOf, type FieldConfig } from "@/config/resources";
 import { useRouter } from "next/navigation";
 import { ImagePreviewThumb } from "./ImagePreviewThumb";
 import RichTextEditor from "./RichTextEditor";
+import FkLabel from "@/components/shared/fk-label";
 
 const SETTINGS_SELECTS: Record<string, { label: string; value: string }[]> = {
   type: [
@@ -327,6 +328,11 @@ function FieldControl({ resource, field, value, onChange, form }: { resource: st
                   <div className="text-xs">Chưa chọn ảnh thumbnail</div>
                 )}
               </div>
+            </div>
+          )}
+          {value && (
+            <div className="mt-1 text-xs text-muted-foreground">
+              Da chon: <FkLabel resource={field.fk!.resource} id={value} labelFields={field.fk!.labelFields} fallbackId />
             </div>
           )}
           <Input value={q} placeholder={`Tìm ${field.label.toLowerCase()}...`} onChange={(e) => setQ(e.target.value)} />

@@ -1,1 +1,1 @@
-      { name: "content", label: "Nội dung", type: "textarea", required: true },
+          {value && <div className="mt-1 text-xs text-muted-foreground">Đã chọn: {String(value)}</div>}
