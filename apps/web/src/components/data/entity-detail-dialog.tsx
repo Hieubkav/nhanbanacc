@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Star, CheckCircle2, Tag, CalendarClock, Phone, Mail, Facebook, Youtube } from "lucide-react";
 import { StorageImage } from "@/components/shared/storage-image";
+import SafeHtml from "@/components/shared/safe-html";
 
 type Kind = "product" | "post";
 
@@ -287,9 +288,11 @@ function PostDetail({ id }: { id: string }) {
           <TabsTrigger value="meta">Thong tin</TabsTrigger>
         </TabsList>
         <TabsContent value="content" className="mt-3">
-          <div className="text-sm whitespace-pre-wrap break-words leading-relaxed">
-            {(data as any)?.content || "Chua co noi dung."}
-          </div>
+          {(data as any)?.content ? (
+            <SafeHtml html={(data as any).content} />
+          ) : (
+            <p className="text-sm text-muted-foreground">Chua co noi dung.</p>
+          )}
         </TabsContent>
         <TabsContent value="images" className="mt-3">
           {pics?.items?.length ? (
@@ -339,4 +342,3 @@ export function EntityDetailDialog({
 function formatPrice(n: number) {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(n);
 }
-
