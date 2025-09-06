@@ -457,7 +457,7 @@ export function EntityDetailDialog({
           type="button"
           aria-label="Đóng"
           onClick={() => handleOpenChange(false)}
-          className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-foreground transition hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20"
+          className="absolute right-3 top-3 z-50 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-foreground shadow-sm backdrop-blur-sm transition hover:bg-white/90 dark:bg-gray-800/80 dark:hover:bg-gray-700/80"
         >
           <X className="h-5 w-5" />
         </button>
