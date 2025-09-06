@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { StorageImage } from "@/components/shared/storage-image";
+import { Button } from "@/components/ui/button";
 
 export type EntityCardProps = {
   title: string;
@@ -14,6 +15,7 @@ export type EntityCardProps = {
   }>;
   images?: string[]; // Danh sách imageId
   inStock?: boolean; // Thông tin tồn kho
+  externalUrl?: string;
   stockQuantity?: number; // Số lượng tồn kho
   onClick?: () => void;
   className?: string;
@@ -27,6 +29,7 @@ export function EntityCard({
   images,
   inStock,
   stockQuantity,
+  externalUrl,
   onClick, 
   className 
 }: EntityCardProps) {
@@ -46,7 +49,18 @@ export function EntityCard({
     : 0;
 
   return (
-    <button type="button" onClick={onClick} className={cn("text-left", className)}>
+    <div
+      onClick={onClick}
+      className={cn("text-left cursor-pointer", className)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+    >
       <Card className="group relative h-full w-full cursor-pointer rounded-xl border border-gray-200 bg-white/80 p-5 transition-all duration-300 hover:shadow-lg hover:border-gold/60 dark:border-gray-700 dark:bg-gray-800/80 dark:hover:bg-gray-800">
         {/* Hình ảnh sản phẩm */}
         {images && images.length > 0 && images[0] && images[0] !== "undefined" ? (
@@ -81,6 +95,28 @@ export function EntityCard({
           <p className="text-muted-foreground mt-3 line-clamp-3 text-sm dark:text-gray-300">
             {description}
           </p>
+        ) : null}
+        {externalUrl ? (
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <a
+              href={externalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm underline text-blue-600 hover:text-blue-700 dark:text-blue-400"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Xem website
+            </a>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-full"
+              onClick={(e) => { e.stopPropagation(); window.open(externalUrl, "_blank", "noopener,noreferrer"); }}
+            >
+              Mở trong tab mới
+            </Button>
+          </div>
         ) : null}
         
         {/* Giá sản phẩm */}
@@ -124,7 +160,7 @@ export function EntityCard({
         
         <div className="absolute inset-0 rounded-xl border-2 border-transparent transition-all duration-300 group-hover:border-gold/30" />
       </Card>
-    </button>
+    </div>
   );
 }
 

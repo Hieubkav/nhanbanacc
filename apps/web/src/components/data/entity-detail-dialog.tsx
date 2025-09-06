@@ -14,7 +14,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import { useSound } from "@/lib/use-sound";
 import { Separator } from "@/components/ui/separator";
 
-type Kind = "product" | "post";
+type Kind = "product" | "post" | "service";
 
 function ProductDetail({ id }: { id: string }) {
   const data = useQuery(api.products.getById, { id: id as any });
@@ -443,7 +443,13 @@ export function EntityDetailDialog({
             <X className="h-5 w-5" />
           </button>
           <div className="h-full overflow-y-auto px-5 pb-8 pt-5">
-            {kind === "product" ? <ProductDetail id={id} /> : <PostDetail id={id} />}
+            {kind === "product" ? (
+              <ProductDetail id={id} />
+            ) : kind === "post" ? (
+              <PostDetail id={id} />
+            ) : (
+              <ServiceDetail id={id} />
+            )}
           </div>
         </SheetContent>
       </Sheet>
@@ -462,7 +468,13 @@ export function EntityDetailDialog({
           <X className="h-5 w-5" />
         </button>
         <div className="max-h-[85vh] overflow-y-auto p-6">
-          {kind === "product" ? <ProductDetail id={id} /> : <PostDetail id={id} />}
+          {kind === "product" ? (
+            <ProductDetail id={id} />
+          ) : kind === "post" ? (
+            <PostDetail id={id} />
+          ) : (
+            <ServiceDetail id={id} />
+          )}
         </div>
       </DialogContent>
     </Dialog>
@@ -471,4 +483,107 @@ export function EntityDetailDialog({
 
 function formatPrice(n: number) {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(n);
+}
+
+function ServiceDetail({ id }: { id: string }) {
+  const data = useQuery(api.service_websites.getById, { id: id as any });
+  const pics = useQuery(api.service_website_images.listByServiceWebsite, {
+    serviceWebsiteId: id as any,
+    sort: { field: "sortOrder", direction: "asc" },
+    pageSize: 20,
+  } as any);
+
+  const title = useMemo(() => (data ? (data as any)?.title ?? "" : ""), [data]);
+  const summary = useMemo(() => (data ? (data as any)?.summary ?? "" : ""), [data]);
+  const description = useMemo(() => (data ? (data as any)?.description ?? "" : ""), [data]);
+  const firstImageId = pics?.items?.[0]?.imageId ? String(pics.items[0].imageId) : undefined;
+
+  const priceEl = (data as any)?.isPriceVisible && (data as any)?.price
+    ? (
+        <span className="inline-flex items-center rounded-full bg-emerald-600 px-2.5 py-1 text-xs font-medium text-white dark:bg-emerald-500">
+          Giá từ {formatPrice((data as any).price)}
+        </span>
+      )
+    : (
+        <span className="inline-flex items-center rounded-full bg-blue-600 px-2.5 py-1 text-xs font-medium text-white dark:bg-blue-500">
+          Liên hệ báo giá
+        </span>
+      );
+
+  return (
+    <>
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-2 text-zinc-900">
+          {title || (data === undefined ? "Đang tải..." : "Không tìm thấy")}
+          <Badge variant="secondary">Dịch vụ web</Badge>
+        </DialogTitle>
+        {summary ? <DialogDescription>{summary}</DialogDescription> : null}
+      </DialogHeader>
+
+      {firstImageId ? (
+        <div className="relative mt-2 h-56 w-full overflow-hidden rounded-xl sm:h-64 md:h-72">
+          <StorageImage imageId={firstImageId} alt={title} />
+        </div>
+      ) : null}
+
+      <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+        {(data as any)?.clientName ? (
+          <span className="inline-flex items-center gap-1">
+            Khách hàng: {(data as any).clientName}
+          </span>
+        ) : null}
+        {(data as any)?.websiteUrl ? (
+          <a href={(data as any).websiteUrl} target="_blank" rel="noopener noreferrer" className="underline">
+            Xem website
+          </a>
+        ) : null}
+        {priceEl}
+      </div>
+
+      {/* Nội dung */}
+      <section className="mt-4">
+        <h3 className="text-base font-semibold">Mô tả</h3>
+        <div className="mt-2">
+          {description ? (
+            <div className="prose prose-sm max-w-none dark:prose-invert">
+              <SafeHtml html={description} />
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">Chưa có mô tả.</p>
+          )}
+        </div>
+      </section>
+
+      {/* Thư viện ảnh */}
+      <Separator className="my-4" />
+      <section>
+        <h3 className="text-base font-semibold">Hình ảnh</h3>
+        <div className="mt-2">
+          {pics?.items?.length ? (
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {pics.items.map((p: any) => (
+                <div key={String(p._id)} className="relative h-24 w-full overflow-hidden rounded border">
+                  <StorageImage imageId={String(p.imageId)} alt={title} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">Chưa có hình ảnh.</p>
+          )}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        {(data as any)?.websiteUrl ? (
+          <a href={(data as any).websiteUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
+            Xem website thực tế
+          </a>
+        ) : null}
+        <a href="#contact" className="inline-flex items-center rounded-full border px-4 py-2 text-sm hover:bg-accent">
+          Liên hệ tư vấn
+        </a>
+      </div>
+    </>
+  );
 }

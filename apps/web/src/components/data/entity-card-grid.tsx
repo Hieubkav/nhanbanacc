@@ -9,6 +9,7 @@ export type EntityCardGridProps<T> = {
   // Thêm các hàm để lấy thông tin sản phẩm mới
   getVariants?: (t: T) => Array<{ price: number; originalPrice?: number }> | undefined;
   getImages?: (t: T) => string[] | undefined;
+  getExternalUrl?: (t: T) => string | undefined;
   getInStock?: (t: T) => boolean | undefined;
   getStockQuantity?: (t: T) => number | undefined;
   onItemClick?: (t: T) => void;
@@ -23,6 +24,7 @@ export function EntityCardGrid<T>({
   getBadge,
   getVariants,
   getImages,
+  getExternalUrl,
   getInStock,
   getStockQuantity,
   onItemClick, 
@@ -57,6 +59,7 @@ export function EntityCardGrid<T>({
             badge={getBadge?.(it)}
             variants={getVariants?.(it)}
             images={validImages && validImages.length > 0 ? validImages : undefined}
+            externalUrl={getExternalUrl?.(it)}
             inStock={getInStock?.(it)}
             stockQuantity={getStockQuantity?.(it)}
             onClick={() => onItemClick?.(it)}
@@ -66,4 +69,3 @@ export function EntityCardGrid<T>({
     </div>
   );
 }
-

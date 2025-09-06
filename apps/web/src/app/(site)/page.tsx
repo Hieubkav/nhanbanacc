@@ -8,6 +8,7 @@ import { EntityDetailDialog } from "@/components/data/entity-detail-dialog";
 import { useSound } from "@/lib/use-sound";
 import HeroSlider from "@/components/marketing/hero-slider";
 import ProductExplorer from "@/components/product/product-explorer";
+import ServiceExplorer from "@/components/service/service-explorer";
 import PostExplorer from "@/components/post/post-explorer";
 import FAQSection from "@/components/faq/faq";
 import ReviewsSection from "@/components/marketing/reviews-section";
@@ -16,7 +17,7 @@ import Footer from "@/components/site/footer";
 export default function Home() {
   const { beep } = useSound();
   const [searchOpen, setSearchOpen] = useState(false);
-  const [detail, setDetail] = useState<{ kind: "product" | "post"; id: string } | null>(null);
+  const [detail, setDetail] = useState<{ kind: "product" | "post" | "service"; id: string } | null>(null);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-blue-50 to-blue-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -36,6 +37,20 @@ export default function Home() {
               {/* Hard coded content removed */}
             </div>
             <ProductExplorer onOpenDetail={(id) => setDetail({ kind: "product", id })} />
+          </section>
+
+          {/* Service Websites Section */}
+          <section className="animate-fade-in-up animation-delay-100" id="services">
+            <div className="mb-8 flex items-center justify-between">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Dịch Vụ Thiết Kế Website</h2>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent ml-4 dark:via-emerald-500/30"></div>
+            </div>
+            <div className="mb-6">
+              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
+                Triển khai website nhanh, đẹp, tối ưu SEO. Xem mẫu đã làm và liên hệ tư vấn ngay.
+              </p>
+            </div>
+            <ServiceExplorer onOpenDetail={(id) => setDetail({ kind: "service", id })} />
           </section>
 
           {/* Posts Section */}
