@@ -1,0 +1,22 @@
+{externalUrl ? (
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <a
+              href={externalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm underline text-blue-600 hover:text-blue-700 dark:text-blue-400"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Xem website
+            </a>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-full"
+              onClick={(e) => { e.stopPropagation(); window.open(externalUrl, "_blank", "noopener,noreferrer"); }}
+            >
+              Mở trong tab mới
+            </Button>
+          </div>
+        ) : null}
