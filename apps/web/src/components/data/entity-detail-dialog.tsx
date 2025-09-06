@@ -69,7 +69,6 @@ function ProductDetail({ id }: { id: string }) {
     { id: "p-overview", label: "Tong quan" },
     { id: "p-variants", label: "Bien the & gia" },
     { id: "p-reviews", label: "Danh gia" },
-    { id: "p-images", label: "Hinh anh" },
   ];
   const [activeSec, setActiveSec] = useState<string>(productSections[0].id);
   useEffect(() => {
@@ -307,25 +306,7 @@ function ProductDetail({ id }: { id: string }) {
         </div>
       </section>
 
-      <Separator className="my-4" />
-
-      {/* Images */}
-      <section id="p-images" className="scroll-mt-24">
-        <h3 className="text-base font-semibold">Hinh anh</h3>
-        <div className="mt-3">
-          {pics?.items?.length ? (
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-              {pics.items.map((p: any) => (
-                <div key={String(p._id)} className="relative h-24 w-full overflow-hidden rounded border">
-                  <StorageImage imageId={String(p.imageId)} alt={title} fit="contain" className="bg-white dark:bg-gray-900" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">Chua co hinh anh.</p>
-          )}
-        </div>
-      </section>
+      
     </>
   );
 }
