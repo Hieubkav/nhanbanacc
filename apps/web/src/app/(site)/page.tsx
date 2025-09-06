@@ -19,7 +19,7 @@ export default function Home() {
   const [detail, setDetail] = useState<{ kind: "product" | "post"; id: string } | null>(null);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-amber-50 to-amber-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+    <div className="min-h-screen bg-gradient-to-b from-white via-blue-50 to-blue-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       {/* Hero Section - Full width */}
       <HeroSlider />
       
@@ -30,7 +30,7 @@ export default function Home() {
           <section className="animate-fade-in-up" id="products">
             <div className="mb-8 flex items-center justify-between">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Sản Phẩm Nổi Bật</h2>
-              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-400/40 to-transparent ml-4 dark:via-amber-500/30"></div>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-500/40 to-transparent ml-4 dark:via-blue-600/30"></div>
             </div>
             <div className="mb-6">
               {/* Hard coded content removed */}
@@ -42,7 +42,7 @@ export default function Home() {
           <section className="animate-fade-in-up animation-delay-200" id="posts">
             <div className="mb-8 flex items-center justify-between">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Bài Viết Mới Nhất</h2>
-              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-400/40 to-transparent ml-4 dark:via-amber-500/30"></div>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-500/40 to-transparent ml-4 dark:via-blue-600/30"></div>
             </div>
             <PostExplorer onOpenDetail={(id) => setDetail({ kind: "post", id })} />
           </section>
@@ -51,7 +51,7 @@ export default function Home() {
           <section className="animate-fade-in-up animation-delay-400" id="faq">
             <div className="mb-8 flex items-center justify-between">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Câu Hỏi Thường Gặp</h2>
-              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-400/40 to-transparent ml-4 dark:via-amber-500/30"></div>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-500/40 to-transparent ml-4 dark:via-blue-600/30"></div>
             </div>
             <div className="mb-6">
               <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">

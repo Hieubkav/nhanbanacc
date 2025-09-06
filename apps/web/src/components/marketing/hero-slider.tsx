@@ -22,7 +22,7 @@ export default function HeroSlider() {
   if (!cur) return null;
 
   return (
-    <section className="relative overflow-hidden w-full bg-gradient-to-br from-amber-50 via-yellow-50 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <section className="relative overflow-hidden w-full bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="container mx-auto max-w-6xl px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Slider Section */}
@@ -30,7 +30,7 @@ export default function HeroSlider() {
             {cur.imageId ? (
               <StorageImage imageId={String(cur.imageId)} alt={cur.title ?? "Slide"} className="object-cover w-full h-full" />
             ) : (
-              <div className="bg-gradient-to-br from-amber-100 via-yellow-100 to-white absolute inset-0" />
+              <div className="bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 absolute inset-0" />
             )}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-6">
@@ -58,7 +58,7 @@ export default function HeroSlider() {
                   key={idx}
                   onClick={() => setI(idx)}
                   aria-label={`Slide ${idx + 1}`}
-                  className={"h-2 w-2 rounded-full transition-all duration-300 " + (idx === i ? "bg-gold-gradient w-4" : "bg-white/50 hover:bg-white/80")}
+                  className={"h-2 w-2 rounded-full transition-all duration-300 " + (idx === i ? "bg-blue-500 w-4" : "bg-white/50 hover:bg-white/80")}
                 />)
               )}
             </div>

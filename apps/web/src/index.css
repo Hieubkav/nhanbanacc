@@ -20,41 +20,41 @@ body {
 }
 
 :root {
-    --radius: 0.625rem;
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.14 0 0); /* đậm hơn chút để tăng tương phản */
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.14 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.14 0 0);
-    /* Thương hiệu: vàng đậm, bão hòa cao */
-    --primary: oklch(0.75 0.15 85); /* Gold */
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.99 0.02 90); /* nền phụ rất nhạt ám vàng */
-    --secondary-foreground: oklch(0.2 0 0);
-    --muted: oklch(0.975 0 0);
-    --muted-foreground: oklch(0.46 0.02 90);
-    --accent: oklch(0.99 0.02 100); /* điểm nhấn sáng ấm */
-    --accent-foreground: oklch(0.2 0 0);
-    --destructive: oklch(0.57 0.24 27.3);
-    /* Viền và input đậm hơn để tăng tương phản ở light mode */
-    --border: oklch(0.88 0 0);
-    --input: oklch(0.88 0 0);
-    --ring: var(--primary);
-    /* Chart tông ấm sinh động */
-    --chart-1: oklch(0.74 0.17 85);
-    --chart-2: oklch(0.68 0.13 70);
-    --chart-3: oklch(0.58 0.18 40);
-    --chart-4: oklch(0.82 0.18 95);
-    --chart-5: oklch(0.7 0.2 55);
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.14 0 0);
-    --sidebar-primary: oklch(0.22 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.2 0 0);
-    --sidebar-border: oklch(0.88 0 0);
-    --sidebar-ring: oklch(0.7 0 0);
+	--radius: 0.625rem;
+	--background: oklch(1 0 0);
+	--foreground: oklch(0.14 0 0);
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.14 0 0);
+	--popover: oklch(1 0 0);
+	--popover-foreground: oklch(0.14 0 0);
+	/* Thương hiệu: blue sữa (pastel blue) */
+	--primary: oklch(0.64 0.12 240);
+	--primary-foreground: oklch(0.985 0 0);
+	--secondary: oklch(0.99 0.02 240);
+	--secondary-foreground: oklch(0.2 0 0);
+	--muted: oklch(0.975 0 0);
+	--muted-foreground: oklch(0.46 0.03 240);
+	--accent: oklch(0.98 0.03 240);
+	--accent-foreground: oklch(0.2 0 0);
+	--destructive: oklch(0.57 0.24 27.3);
+	/* Viền & input đậm hơn một chút để tăng tương phản light mode */
+	--border: oklch(0.88 0 0);
+	--input: oklch(0.88 0 0);
+	--ring: var(--primary);
+	/* Chart tông xanh lam dịu */
+	--chart-1: oklch(0.74 0.12 240);
+	--chart-2: oklch(0.78 0.10 255);
+	--chart-3: oklch(0.68 0.10 220);
+	--chart-4: oklch(0.82 0.10 265);
+	--chart-5: oklch(0.72 0.12 230);
+	--sidebar: oklch(0.985 0 0);
+	--sidebar-foreground: oklch(0.14 0 0);
+	--sidebar-primary: oklch(0.22 0 0);
+	--sidebar-primary-foreground: oklch(0.985 0 0);
+	--sidebar-accent: oklch(0.97 0 0);
+	--sidebar-accent-foreground: oklch(0.2 0 0);
+	--sidebar-border: oklch(0.88 0 0);
+	--sidebar-ring: oklch(0.7 0 0);
 }
 
 .dark {
@@ -64,7 +64,7 @@ body {
 	--card-foreground: oklch(0.985 0 0);
 	--popover: oklch(0.205 0 0);
 	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.75 0.15 85); /* Gold color */
+	--primary: oklch(0.64 0.12 240);
 	--primary-foreground: oklch(0.205 0 0);
 	--secondary: oklch(0.269 0 0);
 	--secondary-foreground: oklch(0.985 0 0);
@@ -75,7 +75,7 @@ body {
 	--destructive: oklch(0.704 0.191 22.216);
 	--border: oklch(1 0 0 / 10%);
 	--input: oklch(1 0 0 / 15%);
-	--ring: oklch(0.75 0.15 85); /* Gold color */
+	--ring: var(--primary);
 	--chart-1: oklch(0.488 0.243 264.376);
 	--chart-2: oklch(0.696 0.17 162.48);
 	--chart-3: oklch(0.769 0.188 70.08);
@@ -168,18 +168,26 @@ body {
 	opacity: 0;
 }
 
-/* Gold accent utilities */
-.bg-gold { background-color: oklch(0.75 0.15 85); }
-.text-gold { color: oklch(0.75 0.15 85); }
-.border-gold { border-color: oklch(0.75 0.15 85); }
+/* Brand accent utilities (bound to --primary) */
+.bg-gold { background-color: var(--primary); }
+.text-gold { color: var(--primary); }
+.border-gold { border-color: var(--primary); }
 
-/* Gold gradients */
+/* Brand gradients */
 .bg-gold-gradient {
-    background-image: linear-gradient(90deg, oklch(0.76 0.17 85), oklch(0.72 0.19 95));
+	background-image: linear-gradient(
+		90deg,
+		color-mix(in oklch, var(--primary) 80%, white),
+		color-mix(in oklch, var(--primary) 55%, white)
+	);
 }
 .text-gold-gradient {
-    background-image: linear-gradient(90deg, oklch(0.8 0.16 85), oklch(0.72 0.19 95));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+	background-image: linear-gradient(
+		90deg,
+		color-mix(in oklch, var(--primary) 82%, white),
+		color-mix(in oklch, var(--primary) 60%, white)
+	);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
 }

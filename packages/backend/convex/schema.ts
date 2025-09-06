@@ -234,5 +234,14 @@ export default defineSchema({
     createdAt: v.number(),
     updatedAt: v.number(),
   }),
+
+
+  //=================
+  // Dịch vụ thiết kế website
+  //=================
+
+  service_websites: defineTable({
+    nameWebsite: v.string(),
+  })
 });
 
