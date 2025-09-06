@@ -6,7 +6,7 @@ import { api } from "@nhanbanacc/backend/convex/_generated/api";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, CheckCircle2, Tag, CalendarClock, Phone, Mail, Facebook, Youtube, X } from "lucide-react";
+import { Star, CheckCircle2, Tag, CalendarClock, X } from "lucide-react";
 import { StorageImage } from "@/components/shared/storage-image";
 import SafeHtml from "@/components/shared/safe-html";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -210,33 +210,7 @@ function ProductDetail({ id }: { id: string }) {
             <p className="mt-3 text-sm text-muted-foreground">Chua co dac diem noi bat.</p>
           )}
 
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            {settings?.phone ? (
-              <Button variant="outline" className="rounded-full" onClick={() => window.open(`tel:${settings.phone}`, "_blank")}>
-                <Phone className="mr-2 h-4 w-4" /> {settings.phone}
-              </Button>
-            ) : null}
-            {settings?.email ? (
-              <Button variant="outline" className="rounded-full" onClick={() => window.open(`mailto:${settings.email}`, "_blank")}>
-                <Mail className="mr-2 h-4 w-4" /> {settings.email}
-              </Button>
-            ) : null}
-            {settings?.socialFacebook ? (
-              <Button variant="outline" className="rounded-full" onClick={() => window.open(settings.socialFacebook, "_blank")}>
-                <Facebook className="mr-2 h-4 w-4" /> Facebook
-              </Button>
-            ) : null}
-            {settings?.socialTiktok ? (
-              <Button variant="outline" className="rounded-full" onClick={() => window.open(settings.socialTiktok, "_blank")}>
-                <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
-                TikTok
-              </Button>
-            ) : null}
-            {settings?.socialYoutube ? (
-              <Button variant="outline" className="rounded-full" onClick={() => window.open(settings.socialYoutube, "_blank")}>
-                <Youtube className="mr-2 h-4 w-4" /> YouTube
-              </Button>
-            ) : null}
+          <div className="mt-4">
             {priceStats ? (
               <span className="text-sm text-muted-foreground">Gia tu {formatPrice(priceStats.minPrice)}</span>
             ) : null}
