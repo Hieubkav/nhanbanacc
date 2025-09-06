@@ -241,7 +241,24 @@ export default defineSchema({
   //=================
 
   service_websites: defineTable({
-    nameWebsite: v.string(),
+    title: v.string(),
+    summary: v.optional(v.string()),
+    description: v.optional(v.string()),
+    websiteUrl: v.optional(v.string()),
+    clientName: v.optional(v.string()),
+    isVisible: v.boolean(),
+    sortOrder: v.number(),
+    price: v.optional(v.number()),
+    isPriceVisible: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  }),
+
+  // Lien ket N-N: service_websites x images
+  service_website_images: defineTable({
+    serviceWebsiteId: v.id("service_websites"),
+    imageId: v.id("images"),
+    sortOrder: v.number(),
+    createdAt: v.number(),
   })
 });
-
