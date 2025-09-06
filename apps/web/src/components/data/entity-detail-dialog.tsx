@@ -68,7 +68,6 @@ function ProductDetail({ id }: { id: string }) {
   const productSections = [
     { id: "p-overview", label: "Tong quan" },
     { id: "p-variants", label: "Bien the & gia" },
-    { id: "p-reviews", label: "Danh gia" },
   ];
   const [activeSec, setActiveSec] = useState<string>(productSections[0].id);
   useEffect(() => {
@@ -96,7 +95,7 @@ function ProductDetail({ id }: { id: string }) {
   // Collapsible controls
   const [expandOverview, setExpandOverview] = useState(false);
   const [variantsLimit, setVariantsLimit] = useState(5);
-  const [reviewsLimit, setReviewsLimit] = useState(3);
+  // Removed reviews section; keep rating summary only
 
   return (
     <>
@@ -260,49 +259,6 @@ function ProductDetail({ id }: { id: string }) {
           ) : (
             <p className="text-sm text-muted-foreground">Chua co bien the nao.</p>
           )}
-        </div>
-      </section>
-
-      <Separator className="my-4" />
-
-      {/* Reviews */}
-      <section id="p-reviews" className="scroll-mt-24">
-        <h3 className="text-base font-semibold">Danh gia</h3>
-        <div className="mt-2 text-sm text-muted-foreground">
-          {avgRating.count ? (
-            <span className="inline-flex items-center gap-1">
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" /> {avgRating.avg} ({avgRating.count})
-            </span>
-          ) : (
-            <span>Chua co danh gia.</span>
-          )}
-        </div>
-        <div className="mt-3">
-          {reviews?.items?.length ? (
-            <div className="grid gap-3">
-              {(reviews.items as any[]).slice(0, reviewsLimit).map((r: any) => (
-                <div key={String(r._id)} className="rounded-lg border p-3">
-                  <div className="mb-1 flex items-center gap-1 text-yellow-500">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`h-4 w-4 ${i < (r.rating || 0) ? "fill-yellow-400" : ""}`} />
-                    ))}
-                  </div>
-                  <div className="font-medium">{r.title}</div>
-                  <div className="text-sm text-muted-foreground">{r.content}</div>
-                </div>
-              ))}
-              {reviews.items.length > reviewsLimit ? (
-                <Button variant="ghost" className="justify-center" onClick={() => setReviewsLimit(reviews.items.length)}>
-                  Xem tat ca {reviews.items.length}
-                </Button>
-              ) : null}
-              {reviews.items.length > 3 && reviewsLimit >= reviews.items.length ? (
-                <Button variant="ghost" className="justify-center" onClick={() => setReviewsLimit(3)}>
-                  Thu gon
-                </Button>
-              ) : null}
-            </div>
-          ) : null}
         </div>
       </section>
 
