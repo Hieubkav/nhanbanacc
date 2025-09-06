@@ -22,7 +22,7 @@ export default function HeroSlider() {
   if (!cur) return null;
 
   return (
-    <section className="relative overflow-hidden w-full bg-gradient-to-r from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <section className="relative overflow-hidden w-full bg-gradient-to-br from-amber-50 via-yellow-50 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="container mx-auto max-w-6xl px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Slider Section */}
@@ -30,18 +30,18 @@ export default function HeroSlider() {
             {cur.imageId ? (
               <StorageImage imageId={String(cur.imageId)} alt={cur.title ?? "Slide"} className="object-cover w-full h-full" />
             ) : (
-              <div className="bg-gradient-to-br from-amber-50 to-white absolute inset-0" />
+              <div className="bg-gradient-to-br from-amber-100 via-yellow-100 to-white absolute inset-0" />
             )}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-6">
               <div className="text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
                 <h2 className="text-2xl sm:text-3xl font-bold">
-                  <span className="text-gold">{cur.title ?? "Khám phá ngay hôm nay"}</span>
+                  <span className="text-gold-gradient">{cur.title ?? "Khám phá ngay hôm nay"}</span>
                 </h2>
                 {cur.subtitle ? <p className="mt-2 text-sm sm:text-base">{cur.subtitle}</p> : null}
                 <div className="mt-4">
                   {cur.buttonLink ? (
-                    <Button asChild size="sm" className="rounded-full px-4 py-2 text-sm font-medium shadow-lg hover:shadow-xl transition-all bg-gold hover:bg-opacity-90 text-white border-0">
+                    <Button asChild size="sm" className="rounded-full px-4 py-2 text-sm font-medium shadow-lg hover:shadow-xl transition-all bg-gold-gradient hover:bg-opacity-90 text-white border-0">
                       <a href={cur.buttonLink} target="_blank" rel="noreferrer">
                         {cur.buttonText ?? "Xem chi tiết"}
                       </a>
@@ -58,7 +58,7 @@ export default function HeroSlider() {
                   key={idx}
                   onClick={() => setI(idx)}
                   aria-label={`Slide ${idx + 1}`}
-                  className={"h-2 w-2 rounded-full transition-all duration-300 " + (idx === i ? "bg-gold w-4" : "bg-white/50 hover:bg-white/80")}
+                  className={"h-2 w-2 rounded-full transition-all duration-300 " + (idx === i ? "bg-gold-gradient w-4" : "bg-white/50 hover:bg-white/80")}
                 />)
               )}
             </div>
@@ -71,7 +71,7 @@ export default function HeroSlider() {
                 {settings?.siteName ?? "NhanBanACC"}
               </h1>
               {settings?.slogan ? (
-                <p className="text-2xl sm:text-3xl md:text-4xl text-gold font-medium">
+                <p className="text-2xl sm:text-3xl md:text-4xl text-gold-gradient font-medium">
                   {settings.slogan}
                 </p>
               ) : null}
@@ -85,7 +85,7 @@ export default function HeroSlider() {
                     element.scrollIntoView({ behavior: 'smooth' });
                   }
                 }}
-                className="rounded-full px-8 py-4 text-lg font-semibold bg-gold hover:bg-gold/90 text-white border-0 shadow-lg hover:shadow-xl transition-all"
+                className="rounded-full px-8 py-4 text-lg font-semibold bg-gold-gradient hover:bg-gold-gradient/90 text-white border-0 shadow-lg hover:shadow-xl transition-all"
               >
                 Khám phá sản phẩm
               </Button>
@@ -98,7 +98,7 @@ export default function HeroSlider() {
                     element.scrollIntoView({ behavior: 'smooth' });
                   }
                 }}
-                className="rounded-full px-8 py-4 text-lg font-semibold border-2 border-gold text-gold hover:bg-gold/10 shadow-lg hover:shadow-xl transition-all"
+                className="rounded-full px-8 py-4 text-lg font-semibold border-2 border-gold text-gold-gradient hover:bg-gold-gradient/10 shadow-lg hover:shadow-xl transition-all"
               >
                 Đọc bài viết
               </Button>

@@ -20,38 +20,41 @@ body {
 }
 
 :root {
-	--radius: 0.625rem;
-	--background: oklch(1 0 0);
-	--foreground: oklch(0.145 0 0);
-	--card: oklch(1 0 0);
-	--card-foreground: oklch(0.145 0 0);
-	--popover: oklch(1 0 0);
-	--popover-foreground: oklch(0.145 0 0);
-	--primary: oklch(0.75 0.15 85); /* Gold color */
-	--primary-foreground: oklch(0.985 0 0);
-	--secondary: oklch(0.97 0 0);
-	--secondary-foreground: oklch(0.205 0 0);
-	--muted: oklch(0.97 0 0);
-	--muted-foreground: oklch(0.556 0 0);
-	--accent: oklch(0.97 0 0);
-	--accent-foreground: oklch(0.205 0 0);
-	--destructive: oklch(0.577 0.245 27.325);
-	--border: oklch(0.922 0 0);
-	--input: oklch(0.922 0 0);
-	--ring: oklch(0.75 0.15 85); /* Gold color */
-	--chart-1: oklch(0.646 0.222 41.116);
-	--chart-2: oklch(0.6 0.118 184.704);
-	--chart-3: oklch(0.398 0.07 227.392);
-	--chart-4: oklch(0.828 0.189 84.429);
-	--chart-5: oklch(0.769 0.188 70.08);
-	--sidebar: oklch(0.985 0 0);
-	--sidebar-foreground: oklch(0.145 0 0);
-	--sidebar-primary: oklch(0.205 0 0);
-	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.97 0 0);
-	--sidebar-accent-foreground: oklch(0.205 0 0);
-	--sidebar-border: oklch(0.922 0 0);
-	--sidebar-ring: oklch(0.708 0 0);
+    --radius: 0.625rem;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.14 0 0); /* đậm hơn chút để tăng tương phản */
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.14 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.14 0 0);
+    /* Thương hiệu: vàng đậm, bão hòa cao */
+    --primary: oklch(0.75 0.15 85); /* Gold */
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.99 0.02 90); /* nền phụ rất nhạt ám vàng */
+    --secondary-foreground: oklch(0.2 0 0);
+    --muted: oklch(0.975 0 0);
+    --muted-foreground: oklch(0.46 0.02 90);
+    --accent: oklch(0.99 0.02 100); /* điểm nhấn sáng ấm */
+    --accent-foreground: oklch(0.2 0 0);
+    --destructive: oklch(0.57 0.24 27.3);
+    /* Viền và input đậm hơn để tăng tương phản ở light mode */
+    --border: oklch(0.88 0 0);
+    --input: oklch(0.88 0 0);
+    --ring: var(--primary);
+    /* Chart tông ấm sinh động */
+    --chart-1: oklch(0.74 0.17 85);
+    --chart-2: oklch(0.68 0.13 70);
+    --chart-3: oklch(0.58 0.18 40);
+    --chart-4: oklch(0.82 0.18 95);
+    --chart-5: oklch(0.7 0.2 55);
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.14 0 0);
+    --sidebar-primary: oklch(0.22 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.2 0 0);
+    --sidebar-border: oklch(0.88 0 0);
+    --sidebar-ring: oklch(0.7 0 0);
 }
 
 .dark {
@@ -132,6 +135,10 @@ body {
 	}
 	body {
 		@apply bg-background text-foreground;
+		/* tăng tương phản chữ mặc định ở light mode trên màn hình lớn */
+		@media (min-width: 768px) {
+			text-rendering: optimizeLegibility;
+		}
 	}
 }
 
@@ -162,14 +169,17 @@ body {
 }
 
 /* Gold accent utilities */
-.bg-gold {
-	background-color: oklch(0.75 0.15 85);
-}
+.bg-gold { background-color: oklch(0.75 0.15 85); }
+.text-gold { color: oklch(0.75 0.15 85); }
+.border-gold { border-color: oklch(0.75 0.15 85); }
 
-.text-gold {
-	color: oklch(0.75 0.15 85);
+/* Gold gradients */
+.bg-gold-gradient {
+    background-image: linear-gradient(90deg, oklch(0.76 0.17 85), oklch(0.72 0.19 95));
 }
-
-.border-gold {
-	border-color: oklch(0.75 0.15 85);
+.text-gold-gradient {
+    background-image: linear-gradient(90deg, oklch(0.8 0.16 85), oklch(0.72 0.19 95));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
