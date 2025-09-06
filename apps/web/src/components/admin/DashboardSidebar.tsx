@@ -29,6 +29,7 @@ const resourceNav = [
   { href: "/dashboard/resources/customers", label: "Khách hàng", icon: UserCircle2 },
   { href: "/dashboard/resources/categories", label: "Danh mục", icon: Tags },
   { href: "/dashboard/resources/products", label: "Sản phẩm", icon: Boxes },
+  { href: "/dashboard/resources/service_websites", label: "Dịch vụ website", icon: Boxes },
   { href: "/dashboard/resources/images", label: "Ảnh", icon: ImageIcon },
   { href: "/dashboard/resources/posts", label: "Bài viết", icon: FileText },
   { href: "/dashboard/resources/faqs", label: "FAQ", icon: HelpCircle },
@@ -129,3 +130,4 @@ function NavLink({
     </Button>
   );
 }
+

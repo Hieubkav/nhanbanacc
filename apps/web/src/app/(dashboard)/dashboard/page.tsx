@@ -36,6 +36,7 @@ export default function Dashboard() {
 						<ResourceLink href="/dashboard/resources/posts" label="Bài viết" />
 						<ResourceLink href="/dashboard/resources/faqs" label="FAQ" />
 						<ResourceLink href="/dashboard/resources/sliders" label="Slider" />
+						<ResourceLink href="/dashboard/resources/service_websites" label="Dịch vụ website" />
 						<ResourceLink href="/dashboard/resources/settings" label="Cấu hình" />
 					</div>
 				</div>

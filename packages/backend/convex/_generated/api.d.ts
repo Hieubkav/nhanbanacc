@@ -27,6 +27,8 @@ import type * as product_images from "../product_images.js";
 import type * as product_variants from "../product_variants.js";
 import type * as products from "../products.js";
 import type * as reviews from "../reviews.js";
+import type * as service_website_images from "../service_website_images.js";
+import type * as service_websites from "../service_websites.js";
 import type * as settings from "../settings.js";
 import type * as sliders from "../sliders.js";
 import type * as student from "../student.js";
@@ -56,6 +58,8 @@ declare const fullApi: ApiFromModules<{
   product_variants: typeof product_variants;
   products: typeof products;
   reviews: typeof reviews;
+  service_website_images: typeof service_website_images;
+  service_websites: typeof service_websites;
   settings: typeof settings;
   sliders: typeof sliders;
   student: typeof student;

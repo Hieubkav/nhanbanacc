@@ -39,6 +39,33 @@ export const apiOf = (resource: string): any => (api as any)[resource];
 
 export const RESOURCES: ResourceConfig[] = [
   {
+    key: "service_websites",
+    title: "Dịch vụ website",
+    listColumns: [
+      { key: "title", label: "Tiêu đề" },
+      { key: "clientName", label: "Khách hàng" },
+      { key: "websiteUrl", label: "URL" },
+      { key: "price", label: "Giá" },
+      { key: "isPriceVisible", label: "Hiển giá" },
+      { key: "isVisible", label: "Hiển thị" },
+      { key: "sortOrder", label: "Thứ tự" },
+    ],
+    searchPlaceholder: "Tìm tiêu đề, URL, khách hàng...",
+    defaultSort: { field: "sortOrder", direction: "asc" },
+    toggles: ["isVisible", "isPriceVisible"],
+    createFields: [
+      { name: "title", label: "Tiêu đề", type: "text", required: true },
+      { name: "summary", label: "Tóm tắt", type: "textarea" },
+      { name: "description", label: "Mô tả", type: "richtext" },
+      { name: "websiteUrl", label: "URL website", type: "text" },
+      { name: "clientName", label: "Tên khách hàng", type: "text" },
+      { name: "price", label: "Giá", type: "number" },
+      { name: "isPriceVisible", label: "Hiển giá", type: "boolean", required: true },
+      { name: "sortOrder", label: "Thứ tự", type: "number", required: true },
+      { name: "isVisible", label: "Hiển thị", type: "boolean", required: true },
+    ],
+  },
+  {
     key: "users",
     title: "Người dùng",
     listColumns: [
@@ -259,8 +286,6 @@ export const RESOURCES: ResourceConfig[] = [
 export const RESOURCES_MAP = Object.fromEntries(
   RESOURCES.map((r) => [r.key, r]),
 );
-
-
 
 
 

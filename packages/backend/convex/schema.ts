@@ -252,7 +252,9 @@ export default defineSchema({
     isPriceVisible: v.boolean(),
     createdAt: v.number(),
     updatedAt: v.number(),
-  }),
+  })
+    .index("by_isVisible", { fields: ["isVisible"] })
+    .index("by_sortOrder", { fields: ["sortOrder"] }),
 
   // Lien ket N-N: service_websites x images
   service_website_images: defineTable({
@@ -261,4 +263,7 @@ export default defineSchema({
     sortOrder: v.number(),
     createdAt: v.number(),
   })
+    .index("by_serviceWebsiteId", { fields: ["serviceWebsiteId", "sortOrder"] })
+    .index("by_imageId", { fields: ["imageId"] })
+    .index("by_service_image", { fields: ["serviceWebsiteId", "imageId"] }),
 });

@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import ResourceForm from "@/components/admin/ResourceForm";
 import ProductVariantsPanel from "@/components/admin/ProductVariantsPanel";
 import ProductImagesPanel from "@/components/admin/ProductImagesPanel";
+import ServiceWebsiteImagesPanel from "@/components/admin/ServiceWebsiteImagesPanel";
 import { RESOURCES_MAP } from "@/config/resources";
 
 export default function ResourceEditPage() {
@@ -20,7 +21,11 @@ export default function ResourceEditPage() {
           <ProductImagesPanel productId={id as string} />
         </>
       )}
+      {resource === "service_websites" && (
+        <>
+          <ServiceWebsiteImagesPanel serviceWebsiteId={id as string} />
+        </>
+      )}
     </div>
   );
 }
-
