@@ -4,6 +4,7 @@ import "../../index.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Providers from "@/components/providers";
 import Navbar from "@/components/site/navbar";
+import DynamicHead from "@/components/site/dynamic-head";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,8 @@ export default function SiteLayout({
         <ClerkProvider>
           <Providers>
             <div className="flex min-h-screen flex-col">
+              {/* Cập nhật favicon + title từ Settings nếu có */}
+              <DynamicHead />
               <Navbar />
               <main className="flex-1">{children}</main>
             </div>
