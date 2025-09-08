@@ -184,8 +184,8 @@ function ProductDetail({ id }: { id: string }) {
         <div className="mt-3">
           {longDesc ? (
             <div className="relative">
-              <div className={`text-sm leading-relaxed whitespace-pre-wrap transition-all ${!expandOverview ? "max-h-32 overflow-hidden" : ""}`}>
-                {longDesc}
+              <div className={`prose prose-sm max-w-none dark:prose-invert transition-all ${!expandOverview ? "max-h-32 overflow-hidden" : ""}`}>
+                <SafeHtml html={longDesc} />
               </div>
               {!expandOverview && longDesc && String(longDesc).length > 280 ? (
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-background to-transparent" />
