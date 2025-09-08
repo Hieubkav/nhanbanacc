@@ -29,10 +29,7 @@ function ProductDetail({ id }: { id: string }) {
     pageSize: 100,
   } as any);
   const reviews = useQuery(api.reviews.listByProduct, { productId: id as any, pageSize: 50 } as any);
-  const category = useQuery(
-    api.categories.getById,
-    (data as any)?.categoryId ? ({ id: (data as any).categoryId } as any) : (undefined as any),
-  );
+  // Bỏ lấy danh mục trong popup sản phẩm
   const settings = useQuery(api.settings.getOne);
 
   const title = useMemo(() => (data ? (data as any)?.name ?? "" : ""), [data]);
@@ -64,33 +61,7 @@ function ProductDetail({ id }: { id: string }) {
     return { avg: Math.round((sum / rs.length) * 10) / 10, count: rs.length };
   }, [reviews?.items]);
 
-  // Sticky section nav for single-scroll UI
-  const productSections = [
-    { id: "p-overview", label: "Tong quan" },
-    { id: "p-variants", label: "Bien the & gia" },
-  ];
-  const [activeSec, setActiveSec] = useState<string>(productSections[0].id);
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            setActiveSec(e.target.id);
-          }
-        }
-      },
-      { root: null, threshold: 0.12, rootMargin: "-20% 0px -70% 0px" },
-    );
-    for (const s of productSections) {
-      const el = document.getElementById(s.id);
-      if (el) obs.observe(el);
-    }
-    return () => obs.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pics?.items?.length, variants?.items?.length, reviews?.items?.length]);
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  // Bỏ sticky tabs; hiển thị nội dung phẳng
 
   // Collapsible controls
   const [expandOverview, setExpandOverview] = useState(false);
@@ -148,79 +119,11 @@ function ProductDetail({ id }: { id: string }) {
             {avgRating.avg} ({avgRating.count})
           </span>
         ) : null}
-        {category ? (
-          <span className="inline-flex items-center gap-1">
-            <Tag className="h-4 w-4" /> {category.name}
-          </span>
-        ) : null}
-        {(data as any)?.updatedAt ? (
-          <span className="inline-flex items-center gap-1">
-            <CalendarClock className="h-4 w-4" />
-            {new Date((data as any).updatedAt).toLocaleDateString("vi-VN")}
-          </span>
-        ) : null}
+        {/* Bỏ danh mục và ngày tháng trong popup sản phẩm */}
       </div>
 
-      {/* Sticky section nav */}
-      <div className="sticky top-0 z-10 -mx-5 sm:-mx-6 border-b bg-background/80 px-5 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex gap-2 overflow-x-auto">
-          {productSections.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              onClick={() => scrollTo(s.id)}
-              className={`shrink-0 rounded-full border px-3 py-1.5 text-sm transition ${
-                activeSec === s.id ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent"
-              }`}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Overview */}
-      <section id="p-overview" className="scroll-mt-24">
-        <div className="mt-3">
-          {longDesc ? (
-            <div className="relative">
-              <div className={`prose prose-sm max-w-none dark:prose-invert transition-all ${!expandOverview ? "max-h-32 overflow-hidden" : ""}`}>
-                <SafeHtml html={longDesc} />
-              </div>
-              {!expandOverview && longDesc && String(longDesc).length > 280 ? (
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-background to-transparent" />
-              ) : null}
-              {longDesc && String(longDesc).length > 280 ? (
-                <button className="mt-2 text-sm font-medium text-primary" onClick={() => setExpandOverview((v) => !v)}>
-                  {expandOverview ? "Thu gon" : "Xem them"}
-                </button>
-              ) : null}
-            </div>
-          ) : null}
-
-          {Array.isArray((data as any)?.features) && (data as any)!.features!.length ? (
-            <ul className="mt-3 grid list-disc gap-1 pl-5 text-sm">
-              {(data as any).features.map((f: string, i: number) => (
-                <li key={i}>{f}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="mt-3 text-sm text-muted-foreground">Chua co dac diem noi bat.</p>
-          )}
-
-          <div className="mt-4">
-            {priceStats ? (
-              <span className="text-sm text-muted-foreground">Gia tu {formatPrice(priceStats.minPrice)}</span>
-            ) : null}
-          </div>
-        </div>
-      </section>
-
-      <Separator className="my-4" />
-
-      {/* Variants & Price */}
-      <section id="p-variants" className="scroll-mt-24">
-        <h3 className="text-base font-semibold">Bien the & gia</h3>
+      {/* Biến thể & giá (đặt lên trên mô tả) - bỏ tiêu đề */}
+      <section>
         <div className="mt-3">
           {variants?.items?.length ? (
             <div className="grid gap-2">
@@ -259,6 +162,46 @@ function ProductDetail({ id }: { id: string }) {
           ) : (
             <p className="text-sm text-muted-foreground">Chua co bien the nao.</p>
           )}
+        </div>
+      </section>
+
+      <Separator className="my-4" />
+
+      {/* Mô tả (trước đây là Tong quan) */}
+      <section>
+        <h3 className="text-base font-semibold">Mô tả</h3>
+        <div className="mt-3">
+          {longDesc ? (
+            <div className="relative">
+              <div className={`prose prose-sm max-w-none dark:prose-invert transition-all ${!expandOverview ? "max-h-32 overflow-hidden" : ""}`}>
+                <SafeHtml html={longDesc} />
+              </div>
+              {!expandOverview && longDesc && String(longDesc).length > 280 ? (
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-background to-transparent" />
+              ) : null}
+              {longDesc && String(longDesc).length > 280 ? (
+                <button className="mt-2 text-sm font-medium text-primary" onClick={() => setExpandOverview((v) => !v)}>
+                  {expandOverview ? "Thu gon" : "Xem them"}
+                </button>
+              ) : null}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">Chua co mo ta.</p>
+          )}
+
+          {Array.isArray((data as any)?.features) && (data as any)!.features!.length ? (
+            <ul className="mt-3 grid list-disc gap-1 pl-5 text-sm">
+              {(data as any).features.map((f: string, i: number) => (
+                <li key={i}>{f}</li>
+              ))}
+            </ul>
+          ) : null}
+
+          <div className="mt-4">
+            {priceStats ? (
+              <span className="text-sm text-muted-foreground">Giá từ {formatPrice(priceStats.minPrice)}</span>
+            ) : null}
+          </div>
         </div>
       </section>
 
