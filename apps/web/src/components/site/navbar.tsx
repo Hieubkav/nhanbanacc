@@ -234,7 +234,7 @@ function NavButton({
     <Button
       onClick={onClick}
       variant="ghost"
-      className="rounded-xl px-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring/40"
+      className="rounded-xl px-3 text-sm font-medium cursor-pointer border border-transparent hover:border-gold-strong hover:text-gold-strong hover:bg-transparent transition-colors focus-visible:ring-2 focus-visible:ring-ring/40"
     >
       {children}
     </Button>

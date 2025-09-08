@@ -5,7 +5,7 @@ import { useQuery } from "convex/react";
 import { api } from "@nhanbanacc/backend/convex/_generated/api";
 import { StorageImage } from "@/components/shared/storage-image";
 
-// HeroSlider: chỉ dùng ảnh, full-width, cover theo chiều ngang
+// HeroSlider: chỉ dùng ảnh; luôn full-width; chiều cao tự theo ảnh; tôn trọng tỉ lệ gốc
 export default function HeroSlider() {
   const sliders = useQuery(api.sliders.list, {
     filters: [{ field: "isVisible", value: true }],
@@ -27,16 +27,18 @@ export default function HeroSlider() {
 
   return (
     <section className="relative w-full overflow-hidden">
-      {/* Chiều cao linh hoạt, chỉ ảnh, không overlay/nút/dots */}
-      <div className="relative w-full h-[40vh] min-h-[240px] md:h-[60vh]">
+      <div className="w-full">
         {cur.imageId ? (
           <StorageImage
             imageId={String(cur.imageId)}
             alt={cur.title ?? "Slide"}
-            className="w-full h-full"
+            layout="intrinsic"
+            fit="contain"
+            className="block"
+            imgClassName="w-full h-auto block"
           />
         ) : (
-          <div className="absolute inset-0 bg-muted" />
+          <div className="w-full h-[200px] bg-muted" />
         )}
       </div>
     </section>

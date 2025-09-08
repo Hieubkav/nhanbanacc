@@ -73,7 +73,6 @@ function ProductDetail({ id }: { id: string }) {
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2 text-zinc-900">
           {title || (data === undefined ? "Dang tai..." : "Khong tim thay")}
-          <Badge variant="secondary">San pham</Badge>
         </DialogTitle>
         {shortDesc ? <DialogDescription>{shortDesc}</DialogDescription> : null}
       </DialogHeader>

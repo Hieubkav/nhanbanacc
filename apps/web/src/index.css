@@ -173,6 +173,10 @@ body {
 .text-gold { color: var(--primary); }
 .border-gold { border-color: var(--primary); }
 
+/* True gold highlight for nav (independent from --primary) */
+.hover\:border-gold-strong:hover { border-color: oklch(0.78 0.15 85); }
+.hover\:text-gold-strong:hover { color: oklch(0.78 0.15 85); }
+
 /* Brand gradients */
 .bg-gold-gradient {
 	background-image: linear-gradient(

@@ -11,6 +11,7 @@ export function StorageImage({
   imgClassName,
   priority = false,
   fit = "cover",
+  layout = "fill",
 }: {
   imageId: string;
   alt?: string;
@@ -18,27 +19,31 @@ export function StorageImage({
   imgClassName?: string;
   priority?: boolean;
   fit?: "cover" | "contain";
+  // layout = "fill": phủ kín khung (absolute inset-0 h-full w-full)
+  // layout = "intrinsic": tôn trọng tỉ lệ gốc, w-full h-auto
+  layout?: "fill" | "intrinsic";
 }) {
   const r = useQuery(api.images.getViewUrl, { id: imageId as any });
   const url = r?.url ?? null;
   return (
-    <div className={cn("absolute inset-0 h-full w-full", className)}>
+    <div className={cn(layout === "fill" ? "absolute inset-0 h-full w-full" : "", className)}>
       {url ? (
         // Dùng img thuần để không cần cấu hình remotePatterns cho Next/Image
         <img
           src={url}
           alt={alt ?? "image"}
           className={cn(
-            "h-full w-full",
-            fit === "contain" ? "object-contain" : "object-cover",
+            layout === "fill" ? "h-full w-full" : "w-full h-auto block",
+            layout === "fill"
+              ? (fit === "contain" ? "object-contain" : "object-cover")
+              : undefined,
             imgClassName,
           )}
           loading={priority ? "eager" : "lazy"}
         />
       ) : (
-        <div className="bg-muted absolute inset-0" />
+        <div className={cn(layout === "fill" ? "bg-muted absolute inset-0" : "bg-muted w-full h-[200px]")} />
       )}
     </div>
   );
 }
-

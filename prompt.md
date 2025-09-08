@@ -1,5 +1,4 @@
-khi tôi sửa tồn kho và đã bán trong chin tiết sản phẩm xuất hiện lỗi
-
+lỗi 
 
 
 ## Error Type
@@ -8,10 +7,26 @@ Console Error
 
 ## Error Message
 
-[CONVEX M(products:update)] [Request ID: b4ddc964d4ebef0d] Server Error
-ArgumentValidationError: Object contains extra field `inventoryQuantity` that is not in the validator.
-Path: .patch
-Object: {categoryId: "jh78cr097g8jyh0qf3a2qa3cy97pvref", description: "<p data-start=\"236\" data-end=\"608\"><strong data-start=\"236\" data-end=\"245\">Canva`</strong>` là nền tảng thiết kế đồ họa trực tuyến phổ biến, cho phép bạn tạo ra hình ảnh, video, bài thuyết trình, tài liệu và nhiều loại nội dung khác mà <strong data-start=\"390\" data-end=\"434\">không cần kỹ năng thiết kế chuyên nghiệp`</strong>`. Với giao diện kéo-thả trực quan và kho tài nguyên phong phú, Canva phù hợp cho cá nhân, doanh nghiệp, giáo viên, hay bất kỳ ai muốn làm đẹp nội dung một cách nhanh chóng.`</p>`\n<ul data-start=\"610\" data-end=\"1193\">\n<li data-start=\"610\" data-end=\"743\">\n<p data-start=\"612\" data-end=\"743\"><strong data-start=\"612\" data-end=\"641\">Kho mẫu thiết kế khổng lồ`</strong>`: hàng triệu template sẵn có cho mọi nhu cầu – từ mạng xã hội, poster, logo, đến tài liệu công việc.`</p>`\n`</li>`\n<li data-start=\"744\" data-end=\"859\">\n<p data-start=\"746\" data-end=\"859\"><strong data-start=\"746\" data-end=\"772\">Tích hợp AI thông minh`</strong>`: hỗ trợ viết nội dung, gợi ý hình ảnh, tạo video, và chỉnh sửa chỉ với một cú click.`</p>`\n`</li>`\n<li data-start=\"860\" data-end=\"959\">\n<p data-start=\"862\" data-end=\"959\"><strong data-start=\"862\" data-end=\"887\">Làm việc nhóm dễ dàng`</strong>`: chia sẻ file, chỉnh sửa trực tiếp cùng đồng đội theo thời gian thực.`</p>`\n`</li>`\n<li data-start=\"960\" data-end=\"1054\">\n<p data-start=\"962\" data-end=\"1054\"><strong data-start=\"962\" data-end=\"977\">Đa nền tảng`</strong>`: dùng trên web, ứng dụng di động, hoặc desktop, đồng bộ mọi dự án của bạn.`</p>`\n`</li>`\n<li data-start=\"1055\" data-end=\"1193\">\n<p data-start=\"1057\" data-end=\"1193\"><strong data-start=\"1057\" data-end=\"1084\">Miễn phí &amp; Nâng cấp Pro`</strong>`: bản miễn phí đã rất mạnh mẽ, còn Canva Pro mở khóa thêm nhiều tài nguyên độc quyền và tính năng nâng cao.`</p></li>``</ul><div>`<h2 data-start=\"660\" data-end=\"708\">🔎 Vậy Visa Debit phi vật lý của bạn ở đâu?`</h2>`\n<ul data-start=\"709\" data-end=\"985\">\n<li data-start=\"709\" data-end=\"763\">\n<p data-start=\"711\" data-end=\"763\"><strong data-start=\"711\" data-end=\"736\">Visa Debit phi vật lý`</strong>` KHÔNG nằm ở mục “+” này.`</p>`\n`</li>`\n<li data-start=\"764\" data-end=\"878\">\n<p data-start=\"766\" data-end=\"878\">Nó nằm ở <strong data-start=\"775\" data-end=\"810\">phần danh sách thẻ đã phát hành`</strong>` → chính là chỗ bạn đang thấy 2 thẻ (cả hai đều ghi “phi vật lý”).`</p>`\n`</li>`\n<li data-start=\"879\" data-end=\"985\">\n<p data-start=\"881\" data-end=\"985\">Nghĩa là: bạn đã từng phát hành thành công nên nó hiển thị ở danh sách rồi, không cần bấm dấu “+” nữa.`</p>`\n`</li>`\n`</ul>`\n<p data-start=\"987\" data-end=\"1135\">👉 Cái menu dấu “+” chủ yếu để mở <strong data-start=\"1021\" data-end=\"1042\">sản phẩm mới khác`</strong>` (tài khoản số đẹp, thẻ tín dụng, tài khoản cho con…), chứ không phải để tạo thêm Debit ảo.`</p></div>`", inventoryQuantity: 113.0, isVisible: true, name: "Canva – Công cụ thiết kế trực tuyến dễ dùng", shortDesc: "Canva – công cụ thiết kế trực tuyến với giao diện kéo-thả, kho mẫu khổng lồ và tích hợp AI, giúp ai cũng có thể tạo ra thiết kế chuyên nghiệp trong vài phút.", showSecondaryImages: true, slug: "canva-cong-cu-thiet-ke-truc-tuyen-de-dung", soldQuantity: 333.0, sortOrder: 1.0, status: "published"}
-Validator: v.object({categoryId: v.optional(v.id("categories")), description: v.optional(v.string()), features: v.optional(v.array(v.string())), isVisible: v.optional(v.boolean()), name: v.optional(v.string()), shortDesc: v.optional(v.string()), showSecondaryImages: v.optional(v.boolean()), slug: v.optional(v.string()), sortOrder: v.optional(v.float64()), status: v.optional(v.string())})
+`DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
 
-Next.js version: 15.5.0 (Turbopac
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+
+    at _c1 (src/components/ui/sheet.tsx:60:5)
+    at _c1 (src/components/ui/sheet.tsx:58:3)
+    at Navbar (src/components/site/navbar.tsx:167:13)
+    at SiteLayout (src\app\(site)\layout.tsx:34:15)
+
+## Code Frame
+
+  58 |   `<SheetPortal>`
+  59 |     `<SheetOverlay />`
+
+> 60 |     <SheetPrimitive.Content
+> |     ^
+> 61 |       ref={ref}
+> 62 |       className={cn(sheetVariants({ side }), className)}
+> 63 |       {...props}
+
+Next.js version: 15.5.0 (Turbopack)
