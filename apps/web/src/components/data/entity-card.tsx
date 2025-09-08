@@ -75,10 +75,10 @@ export function EntityCard({
         }
       }}
     >
-      <Card className="group relative h-full w-full cursor-pointer rounded-xl border border-gray-200 bg-white/80 p-5 transition-all duration-300 hover:border-gold/60 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800/80 dark:hover:bg-gray-800">
+      <Card className="group relative h-full w-full cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white/80 transition-all duration-300 hover:border-gold/60 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800/80 dark:hover:bg-gray-800 pt-0">
         {/* Hình ảnh */}
         {images && images.length > 0 && images[0] && images[0] !== "undefined" ? (
-          <div className="relative mb-4 overflow-hidden rounded-lg">
+          <div className="relative overflow-hidden">
             <div className="relative h-48 w-full">
               <StorageImage
                 imageId={images[0]}
@@ -89,93 +89,95 @@ export function EntityCard({
             </div>
             {/* Nhãn giảm giá */}
             {discountPercent > 0 && (
-              <Badge className="absolute left-2 top-2 rounded-full bg-red-500 px-2 py-1 text-xs text-white">
+              <Badge className="absolute left-3 top-3 rounded-full bg-red-500 px-2 py-1 text-xs text-white">
                 -{discountPercent}%
               </Badge>
             )}
           </div>
         ) : (
-          <div className="mb-4 h-48 w-full rounded-lg bg-gray-200 dark:bg-gray-700" />
+          <div className="h-48 w-full bg-gray-200 dark:bg-gray-700" />
         )}
 
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="line-clamp-2 text-lg font-semibold leading-snug tracking-tight text-gray-900 dark:text-white">
-            {title}
-          </h3>
-          {badge ? (
-            <Badge className="shrink-0 rounded-full bg-gold/10 px-3 py-1 text-xs text-gold dark:bg-gold/20 dark:text-gold">
-              {badge}
-            </Badge>
-          ) : null}
-        </div>
-
-        {description ? (
-          <p className="mt-3 line-clamp-3 text-sm text-muted-foreground dark:text-gray-300">{description}</p>
-        ) : null}
-
-        {(onClick || safeExternalUrl) ? (
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            {onClick ? (
-              <Button
-                size="sm"
-                variant="secondary"
-                className="rounded-full"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onClick?.();
-                }}
-                aria-label="Xem thông tin"
-              >
-                <Eye className="mr-2 h-4 w-4" /> Xem thông tin
-              </Button>
-            ) : null}
-            {safeExternalUrl ? (
-              <Button asChild size="sm" variant="outline" className="rounded-full">
-                <a
-                  href={safeExternalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  aria-label="Mở trong tab mới"
-                >
-                  <ExternalLink className="mr-2 h-4 w-4" /> Mở trong tab mới
-                </a>
-              </Button>
+        <div className="p-5">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="line-clamp-2 text-lg font-semibold leading-snug tracking-tight text-gray-900 dark:text-white">
+              {title}
+            </h3>
+            {badge ? (
+              <Badge className="shrink-0 rounded-full bg-gold/10 px-3 py-1 text-xs text-gold dark:bg-gold/20 dark:text-gold">
+                {badge}
+              </Badge>
             ) : null}
           </div>
-        ) : null}
 
-        {/* Giá sản phẩm */}
-        <div className="mt-3">
-          {lowestPrice !== undefined ? (
-            <div className="flex items-center">
-              {lowestOriginalPrice && lowestOriginalPrice > lowestPrice ? (
-                <>
-                  <span className="text-lg font-bold text-red-600 dark:text-red-400">Từ {formatPrice(lowestPrice)}</span>
-                  <span className="ml-2 text-sm text-gray-500 line-through dark:text-gray-400">
-                    {formatPrice(lowestOriginalPrice)}
-                  </span>
-                </>
-              ) : (
-                <span className="text-lg font-bold text-gray-900 dark:text-white">Từ {formatPrice(lowestPrice)}</span>
-              )}
-            </div>
-          ) : (
-            <span className="text-lg font-bold text-gray-900 dark:text-white">Liên hệ</span>
-          )}
-        </div>
-
-        {/* Thông tin tồn kho */}
-        <div className="mt-2 text-sm">
-          {inStock !== undefined ? (
-            inStock ? (
-              <span className="text-green-600 dark:text-green-400">
-                Còn hàng {stockQuantity !== undefined && `(${stockQuantity})`}
-              </span>
-            ) : (
-              <span className="text-red-600 dark:text-red-400">Hết hàng</span>
-            )
+          {description ? (
+            <p className="mt-3 line-clamp-3 text-sm text-muted-foreground dark:text-gray-300">{description}</p>
           ) : null}
+
+          {(onClick || safeExternalUrl) ? (
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              {onClick ? (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="rounded-full"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onClick?.();
+                  }}
+                  aria-label="Xem thông tin"
+                >
+                  <Eye className="mr-2 h-4 w-4" /> Xem thông tin
+                </Button>
+              ) : null}
+              {safeExternalUrl ? (
+                <Button asChild size="sm" variant="outline" className="rounded-full">
+                  <a
+                    href={safeExternalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    aria-label="Mở trong tab mới"
+                  >
+                    <ExternalLink className="mr-2 h-4 w-4" /> Mở trong tab mới
+                  </a>
+                </Button>
+              ) : null}
+            </div>
+          ) : null}
+
+          {/* Giá sản phẩm */}
+          <div className="mt-3">
+            {lowestPrice !== undefined ? (
+              <div className="flex items-center">
+                {lowestOriginalPrice && lowestOriginalPrice > lowestPrice ? (
+                  <>
+                    <span className="text-lg font-bold text-red-600 dark:text-red-400">Từ {formatPrice(lowestPrice)}</span>
+                    <span className="ml-2 text-sm text-gray-500 line-through dark:text-gray-400">
+                      {formatPrice(lowestOriginalPrice)}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-lg font-bold text-gray-900 dark:text-white">Từ {formatPrice(lowestPrice)}</span>
+                )}
+              </div>
+            ) : (
+              <span className="text-lg font-bold text-gray-900 dark:text-white">Liên hệ</span>
+            )}
+          </div>
+
+          {/* Thông tin tồn kho */}
+          <div className="mt-2 text-sm">
+            {inStock !== undefined ? (
+              inStock ? (
+                <span className="text-green-600 dark:text-green-400">
+                  Còn hàng {stockQuantity !== undefined && `(${stockQuantity})`}
+                </span>
+              ) : (
+                <span className="text-red-600 dark:text-red-400">Hết hàng</span>
+              )
+            ) : null}
+          </div>
         </div>
 
         {/* Overlay hiệu ứng hover: không chặn click */}
