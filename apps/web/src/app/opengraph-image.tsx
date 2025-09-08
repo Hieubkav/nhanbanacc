@@ -45,9 +45,8 @@ export default function OGImage() {
             marginTop: 36,
             fontSize: 22,
             color: "#1e293b",
-            display: "inline-flex",
+            display: "flex",
             alignItems: "center",
-            gap: 12,
             padding: "10px 16px",
             backgroundColor: "#fef3c7",
             borderRadius: 999,
@@ -63,4 +62,3 @@ export default function OGImage() {
     },
   );
 }
-
