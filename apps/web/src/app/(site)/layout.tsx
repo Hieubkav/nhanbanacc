@@ -35,8 +35,8 @@ export const metadata: Metadata = {
     initialScale: 1,
     maximumScale: 5,
     userScalable: true,
-    themeColor: "#0ea5e9",
   },
+  themeColor: "#0ea5e9",
   alternates: {
     canonical: "/",
     languages: {
