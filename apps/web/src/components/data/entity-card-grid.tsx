@@ -12,6 +12,8 @@ export type EntityCardGridProps<T> = {
   getExternalUrl?: (t: T) => string | undefined;
   getInStock?: (t: T) => boolean | undefined;
   getStockQuantity?: (t: T) => number | undefined;
+  getInventoryQuantity?: (t: T) => number | undefined;
+  getSoldQuantity?: (t: T) => number | undefined;
   onItemClick?: (t: T) => void;
   empty?: React.ReactNode;
 };
@@ -27,6 +29,8 @@ export function EntityCardGrid<T>({
   getExternalUrl,
   getInStock,
   getStockQuantity,
+  getInventoryQuantity,
+  getSoldQuantity,
   onItemClick, 
   empty 
 }: EntityCardGridProps<T>) {
@@ -62,6 +66,8 @@ export function EntityCardGrid<T>({
             externalUrl={getExternalUrl?.(it)}
             inStock={getInStock?.(it)}
             stockQuantity={getStockQuantity?.(it)}
+            inventoryQuantity={getInventoryQuantity?.(it)}
+            soldQuantity={getSoldQuantity?.(it)}
             onClick={() => onItemClick?.(it)}
           />
         );

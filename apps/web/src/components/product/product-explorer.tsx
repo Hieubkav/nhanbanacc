@@ -181,6 +181,8 @@ export default function ProductExplorer({ onOpenDetail }: { onOpenDetail: (id: s
         // Cung cấp variants để thẻ hiển thị giá dạng "Từ x VND"
         getVariants={(p: any) => variantsByProductId[String(p._id)]}
         getImages={(p: any) => p.images}
+        getInventoryQuantity={(p: any) => p.inventoryQuantity}
+        getSoldQuantity={(p: any) => p.soldQuantity}
         onItemClick={(p: any) => onOpenDetail(String(p._id))}
       />
 

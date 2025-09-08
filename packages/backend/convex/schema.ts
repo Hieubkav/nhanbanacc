@@ -81,6 +81,9 @@ export default defineSchema({
     isVisible: v.boolean(),
     showSecondaryImages: v.optional(v.boolean()),
     categoryId: v.id("categories"),
+    // Thêm trường số lượng tồn kho và số lượng đã bán
+    inventoryQuantity: v.optional(v.number()),
+    soldQuantity: v.optional(v.number()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })

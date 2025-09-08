@@ -133,6 +133,8 @@ export const RESOURCES: ResourceConfig[] = [
       { key: "preview", label: "Ảnh", width: "w-[84px]", render: (row: any) => createElement(ProductFirstImageCell as any, { productId: String(row._id), size: 56 }) },
       { key: "name", label: "Tên" },
       { key: "slug", label: "Slug" },
+      { key: "inventoryQuantity", label: "Tồn kho" },
+      { key: "soldQuantity", label: "Đã bán" },
       { key: "status", label: "Trạng thái" },
       { key: "isVisible", label: "Hiển thị" },
       { key: "sortOrder", label: "Thứ tự" },
@@ -145,6 +147,8 @@ export const RESOURCES: ResourceConfig[] = [
       { name: "slug", label: "Slug", type: "text", required: true },
       { name: "description", label: "Mô tả", type: "textarea" },
       { name: "shortDesc", label: "Tóm tắt", type: "textarea" },
+      { name: "inventoryQuantity", label: "Tồn kho", type: "number" },
+      { name: "soldQuantity", label: "Đã bán", type: "number" },
       { name: "status", label: "Trạng thái", type: "select", options: [
         { label: "draft", value: "draft" },
         { label: "published", value: "published" },

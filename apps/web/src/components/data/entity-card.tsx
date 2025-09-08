@@ -20,6 +20,9 @@ export type EntityCardProps = {
   inStock?: boolean;
   externalUrl?: string;
   stockQuantity?: number;
+  // Thông số bổ sung
+  inventoryQuantity?: number;
+  soldQuantity?: number;
   onClick?: () => void;
   className?: string;
 };
@@ -32,6 +35,8 @@ export function EntityCard({
   images,
   inStock,
   stockQuantity,
+  inventoryQuantity,
+  soldQuantity,
   externalUrl,
   onClick,
   className,
@@ -129,6 +134,18 @@ export function EntityCard({
               <span className="text-base font-bold text-gray-900 dark:text-white">Liên hệ</span>
             )}
           </div>
+
+          {/* Tồn kho / Đã bán */}
+          {(inventoryQuantity !== undefined || soldQuantity !== undefined) && (
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+              {inventoryQuantity !== undefined && (
+                <span className="rounded-full bg-muted px-2 py-0.5">Tồn kho: {Math.max(0, Math.floor(inventoryQuantity))}</span>
+              )}
+              {soldQuantity !== undefined && (
+                <span className="rounded-full bg-muted px-2 py-0.5">Đã bán: {Math.max(0, Math.floor(soldQuantity))}</span>
+              )}
+            </div>
+          )}
 
           {/* Thông tin tồn kho */}
           <div className="mt-1 text-xs">

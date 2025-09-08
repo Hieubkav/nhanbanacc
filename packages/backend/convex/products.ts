@@ -143,6 +143,9 @@ export const create = mutation({
       isVisible: v.boolean(),
       showSecondaryImages: v.optional(v.boolean()),
       categoryId: v.id("categories"),
+      // Bổ sung các trường tồn kho/doanh số
+      inventoryQuantity: v.optional(v.number()),
+      soldQuantity: v.optional(v.number()),
     }),
   },
   handler: async (ctx, { dto }) => {
@@ -167,6 +170,9 @@ export const update = mutation({
       isVisible: v.optional(v.boolean()),
       showSecondaryImages: v.optional(v.boolean()),
       categoryId: v.optional(v.id("categories")),
+      // Bổ sung các trường tồn kho/doanh số
+      inventoryQuantity: v.optional(v.number()),
+      soldQuantity: v.optional(v.number()),
     }),
   },
   handler: async (ctx, { id, patch }) => {
@@ -191,6 +197,9 @@ export const guardedUpdate = mutation({
       isVisible: v.optional(v.boolean()),
       showSecondaryImages: v.optional(v.boolean()),
       categoryId: v.optional(v.id("categories")),
+      // Bổ sung các trường tồn kho/doanh số
+      inventoryQuantity: v.optional(v.number()),
+      soldQuantity: v.optional(v.number()),
     }),
   },
   handler: async (ctx, { id, expectedUpdatedAt, patch }) => {
@@ -222,6 +231,9 @@ export const bulkUpdate = mutation({
     sortOrder: v.optional(v.number()),
     isVisible: v.optional(v.boolean()),
     categoryId: v.optional(v.id("categories")),
+    // Bổ sung các trường tồn kho/doanh số
+    inventoryQuantity: v.optional(v.number()),
+    soldQuantity: v.optional(v.number()),
   }) },
   handler: async (ctx, { ids, patch }) => {
     for (const id of ids) {
@@ -298,6 +310,9 @@ export const clone = mutation({
     isVisible: v.optional(v.boolean()),
     showSecondaryImages: v.optional(v.boolean()),
     categoryId: v.optional(v.id("categories")),
+    // Cho phép override tồn kho/doanh số khi clone nếu cần
+    inventoryQuantity: v.optional(v.number()),
+    soldQuantity: v.optional(v.number()),
   })) },
   handler: async (ctx, { id, overrides }) => {
     const src = await ctx.db.get(id);
@@ -320,6 +335,8 @@ export const clone = mutation({
       isVisible: overrides?.isVisible ?? src.isVisible,
       showSecondaryImages: overrides?.showSecondaryImages ?? src.showSecondaryImages,
       categoryId: overrides?.categoryId ?? src.categoryId,
+      inventoryQuantity: overrides?.inventoryQuantity ?? src.inventoryQuantity,
+      soldQuantity: overrides?.soldQuantity ?? src.soldQuantity,
       createdAt: nowTs,
       updatedAt: nowTs,
     };
@@ -354,6 +371,9 @@ export const upsert = mutation({
       isVisible: v.optional(v.boolean()),
       showSecondaryImages: v.optional(v.boolean()),
       categoryId: v.optional(v.id("categories")),
+      // Bổ sung các trường tồn kho/doanh số cho upsert.update
+      inventoryQuantity: v.optional(v.number()),
+      soldQuantity: v.optional(v.number()),
     }),
   },
   handler: async (ctx, { where, create, update }) => {
@@ -368,4 +388,3 @@ export const upsert = mutation({
     return ctx.db.get(found._id);
   },
 });
-
