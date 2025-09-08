@@ -142,6 +142,9 @@ export default function Navbar() {
           <NavButton onClick={() => scrollToSection("products")}>
             Sản phẩm
           </NavButton>
+          <NavButton onClick={() => scrollToSection("services")}>
+            Làm web
+          </NavButton>
           <NavButton onClick={() => scrollToSection("posts")}>
             Bài viết
           </NavButton>
@@ -193,6 +196,9 @@ export default function Navbar() {
               <div className="flex flex-col p-2">
                 <MobileItem onClick={() => scrollToSection("products")}>
                   Sản phẩm
+                </MobileItem>
+                <MobileItem onClick={() => scrollToSection("services")}>
+                  Làm web
                 </MobileItem>
                 <MobileItem onClick={() => scrollToSection("posts")}>
                   Bài viết
