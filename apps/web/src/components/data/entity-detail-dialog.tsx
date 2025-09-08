@@ -11,7 +11,7 @@ import { StorageImage } from "@/components/shared/storage-image";
 import SafeHtml from "@/components/shared/safe-html";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { useSound } from "@/lib/use-sound";
+// import { useSound } from "@/lib/use-sound"; // Removed beep sound
 import { Separator } from "@/components/ui/separator";
 
 type Kind = "product" | "post" | "service";
@@ -121,7 +121,7 @@ function ProductDetail({ id }: { id: string }) {
         </div>
       ) : null}
 
-      {pics?.items?.length ? (
+      {(data as any)?.showSecondaryImages !== false && pics?.items && pics.items.length > 1 ? (
         <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6">
           {pics.items.slice(0, 12).map((p: any) => {
             const id = String(p.imageId);
@@ -420,11 +420,11 @@ export function EntityDetailDialog({
   id: string;
 }) {
   const isMobile = useMediaQuery("(max-width: 640px)");
-  const { beep } = useSound();
+  // const { beep } = useSound(); // Removed beep sound
 
   const handleOpenChange = (o: boolean) => {
     onOpenChange(o);
-    if (!o) beep();
+    // if (!o) beep(); // Removed beep sound
   };
 
   if (isMobile) {

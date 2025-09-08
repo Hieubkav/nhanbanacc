@@ -17,7 +17,7 @@ import {
 const TABLE = "products" as const;
 const SEARCH_FIELDS = ["name", "slug", "description", "shortDesc", "features", "status"] as const;
 const LABEL_FIELDS = ["name", "slug"] as const;
-const TOGGLE_FIELDS = ["isVisible"] as const;
+const TOGGLE_FIELDS = ["isVisible", "showSecondaryImages"] as const;
 const UNIQUE_FIELDS = ["slug"] as const;
 
 export const getById = query({
@@ -141,6 +141,7 @@ export const create = mutation({
       status: v.string(),
       sortOrder: v.number(),
       isVisible: v.boolean(),
+      showSecondaryImages: v.optional(v.boolean()),
       categoryId: v.id("categories"),
     }),
   },
@@ -164,6 +165,7 @@ export const update = mutation({
       status: v.optional(v.string()),
       sortOrder: v.optional(v.number()),
       isVisible: v.optional(v.boolean()),
+      showSecondaryImages: v.optional(v.boolean()),
       categoryId: v.optional(v.id("categories")),
     }),
   },
@@ -187,6 +189,7 @@ export const guardedUpdate = mutation({
       status: v.optional(v.string()),
       sortOrder: v.optional(v.number()),
       isVisible: v.optional(v.boolean()),
+      showSecondaryImages: v.optional(v.boolean()),
       categoryId: v.optional(v.id("categories")),
     }),
   },
@@ -293,6 +296,7 @@ export const clone = mutation({
     status: v.optional(v.string()),
     sortOrder: v.optional(v.number()),
     isVisible: v.optional(v.boolean()),
+    showSecondaryImages: v.optional(v.boolean()),
     categoryId: v.optional(v.id("categories")),
   })) },
   handler: async (ctx, { id, overrides }) => {
@@ -314,6 +318,7 @@ export const clone = mutation({
       status: overrides?.status ?? src.status,
       sortOrder: overrides?.sortOrder ?? src.sortOrder,
       isVisible: overrides?.isVisible ?? src.isVisible,
+      showSecondaryImages: overrides?.showSecondaryImages ?? src.showSecondaryImages,
       categoryId: overrides?.categoryId ?? src.categoryId,
       createdAt: nowTs,
       updatedAt: nowTs,
@@ -335,6 +340,7 @@ export const upsert = mutation({
       status: v.string(),
       sortOrder: v.number(),
       isVisible: v.boolean(),
+      showSecondaryImages: v.optional(v.boolean()),
       categoryId: v.id("categories"),
     }),
     update: v.object({
@@ -346,6 +352,7 @@ export const upsert = mutation({
       status: v.optional(v.string()),
       sortOrder: v.optional(v.number()),
       isVisible: v.optional(v.boolean()),
+      showSecondaryImages: v.optional(v.boolean()),
       categoryId: v.optional(v.id("categories")),
     }),
   },

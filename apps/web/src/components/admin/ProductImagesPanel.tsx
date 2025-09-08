@@ -26,35 +26,6 @@ export default function ProductImagesPanel({ productId }: { productId: string })
   const [tab, setTab] = useState<"library" | "upload">("library");
   const [libOpen, setLibOpen] = useState(false);
 
-  // Library state
-  const [q, setQ] = useState("");
-  const [libPage, setLibPage] = useState(1);
-  const [libPageSize] = useState(12);
-  const [libSort] = useState<{ field: string; direction: "asc" | "desc" }>({ field: "sortOrder", direction: "asc" });
-  const libData = useQuery(api.images.list, { q, page: libPage, pageSize: libPageSize, sort: libSort } as any);
-  const libItems = libData?.items ?? [];
-  const libHasMore = !!libData?.hasMore;
-  const [selected, setSelected] = useState<Record<string, boolean>>({});
-
-  const toggleSelect = (id: string) => setSelected((s) => ({ ...s, [id]: !s[id] }));
-  const clearSelected = () => setSelected({});
-
-  const addSelected = async () => {
-    const ids = Object.keys(selected).filter((k) => selected[k]);
-    if (ids.length === 0) { toast.error("Chưa chọn ảnh nào"); return; }
-    // Prevent duplicates
-    const existing = new Set((items ?? []).map((it: any) => String(it.imageId)));
-    const toAdd = ids.filter((id) => !existing.has(String(id)));
-    if (toAdd.length === 0) { toast.info("Tất cả ảnh đã có trong sản phẩm"); return; }
-    let base = items.length > 0 ? (items[items.length - 1].sortOrder ?? items.length) : 0;
-    for (const id of toAdd) {
-      base += 1;
-      await create({ dto: { productId: productId as any, imageId: id as any, sortOrder: base } as any } as any);
-    }
-    toast.success(`Đã thêm ${toAdd.length} ảnh vào sản phẩm`);
-    clearSelected();
-  };
-
   // Upload state
   const [files, setFiles] = useState<File[]>([]);
   const [upTitle, setUpTitle] = useState("");
@@ -194,17 +165,64 @@ export default function ProductImagesPanel({ productId }: { productId: string })
       <ImageLibraryPicker
         open={libOpen}
         onClose={() => setLibOpen(false)}
+        initialSelected={(items ?? []).map((it: any) => String(it.imageId))}
         onConfirm={async (ids) => {
-          // Attach all selected ids avoiding duplicates
-          const existing = new Set((items ?? []).map((it: any) => String(it.imageId)));
-          const toAdd = ids.filter((id) => !existing.has(String(id)));
-          let base = items.length > 0 ? (items[items.length - 1].sortOrder ?? items.length) : 0;
-          for (const id of toAdd) {
-            base += 1;
-            await create({ dto: { productId: productId as any, imageId: id as any, sortOrder: base } as any } as any);
+          try {
+            if (!ids || ids.length === 0) {
+              toast.info("Chưa chọn ảnh nào");
+              setLibOpen(false);
+              return;
+            }
+            
+            // Attach all selected ids avoiding duplicates
+            const existing = new Set((items ?? []).map((it: any) => String(it.imageId)));
+            const toAdd = ids.filter((id) => !existing.has(String(id)));
+            if (toAdd.length === 0) {
+              toast.info("Tất cả ảnh đã có trong sản phẩm");
+              setLibOpen(false);
+              return;
+            }
+            
+            // Calculate base sortOrder
+            let base = items.length > 0 ? Math.max(...items.map((it: any) => it.sortOrder ?? 0)) : 0;
+            
+            // Add images one by one
+            const errors: string[] = [];
+            for (const id of toAdd) {
+              try {
+                base += 1;
+                await create({ 
+                  dto: { 
+                    productId: productId as any, 
+                    imageId: id as any, 
+                    sortOrder: base 
+                  } 
+                } as any);
+              } catch (error: any) {
+                console.error(`Error adding image ${id}:`, error);
+                errors.push(`Lỗi khi thêm ảnh ${id}: ${error.message || error}`);
+              }
+            }
+            
+            setLibOpen(false);
+            
+            if (errors.length > 0) {
+              toast.error(
+                <div>
+                  <div>Có lỗi xảy ra khi thêm một số ảnh:</div>
+                  {errors.map((err, i) => (
+                    <div key={i} className="text-sm">{err}</div>
+                  ))}
+                </div>
+              );
+            } else {
+              toast.success(`Đã thêm ${toAdd.length} ảnh vào sản phẩm`);
+            }
+          } catch (error: any) {
+            console.error("Error adding images to product:", error);
+            toast.error(`Có lỗi xảy ra khi thêm ảnh vào sản phẩm: ${error.message || error}`);
+            setLibOpen(false);
           }
-          setLibOpen(false);
-          if (toAdd.length) toast.success(`Đã thêm ${toAdd.length} ảnh vào sản phẩm`);
         }}
       />
     </div>

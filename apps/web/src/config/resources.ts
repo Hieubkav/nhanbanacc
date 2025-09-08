@@ -139,7 +139,7 @@ export const RESOURCES: ResourceConfig[] = [
     ],
     searchPlaceholder: "Tìm theo tên, slug...",
     defaultSort: { field: "sortOrder", direction: "asc" },
-    toggles: ["isVisible"],
+    toggles: ["isVisible", "showSecondaryImages"],
     createFields: [
       { name: "name", label: "Tên", type: "text", required: true },
       { name: "slug", label: "Slug", type: "text", required: true },
@@ -151,6 +151,7 @@ export const RESOURCES: ResourceConfig[] = [
       ], required: true },
       { name: "sortOrder", label: "Thứ tự", type: "number", required: true },
       { name: "isVisible", label: "Hiển thị", type: "boolean", required: true },
+      { name: "showSecondaryImages", label: "Hiện ảnh phụ", type: "boolean" },
       { name: "categoryId", label: "Danh mục", type: "fk", fk: { resource: "categories", labelFields: ["name", "slug"] }, required: true },
     ],
   },

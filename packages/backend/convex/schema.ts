@@ -79,6 +79,7 @@ export default defineSchema({
     status: v.string(),
     sortOrder: v.number(),
     isVisible: v.boolean(),
+    showSecondaryImages: v.optional(v.boolean()),
     categoryId: v.id("categories"),
     createdAt: v.number(),
     updatedAt: v.number(),
