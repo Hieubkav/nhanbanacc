@@ -18,6 +18,11 @@ export default function Home() {
   const { beep } = useSound();
   const [searchOpen, setSearchOpen] = useState(false);
   const [detail, setDetail] = useState<{ kind: "product" | "post" | "service"; id: string } | null>(null);
+  const faqs = useQuery(api.faqs.list, {
+    filters: [{ field: "isVisible", value: true }],
+    sort: { field: "sortOrder", direction: "asc" },
+    pageSize: 20,
+  } as any);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-blue-50 to-blue-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -63,19 +68,21 @@ export default function Home() {
           </section>
 
           {/* FAQ Section */}
-          <section className="animate-fade-in-up animation-delay-400" id="faq">
-            <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Câu Hỏi Thường Gặp</h2>
-              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-500/40 to-transparent ml-4 dark:via-blue-600/30"></div>
-            </div>
-            <div className="mb-6">
-              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
-                Tìm câu trả lời cho những thắc mắc phổ biến của khách hàng. 
-                Nếu bạn không tìm thấy câu trả lời mong muốn, đừng ngần ngại liên hệ với chúng tôi.
-              </p>
-            </div>
-            <FAQSection />
-          </section>
+          {(faqs?.items ?? []).length > 0 && (
+            <section className="animate-fade-in-up animation-delay-400" id="faq">
+              <div className="mb-8 flex items-center justify-between">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Câu Hỏi Thường Gặp</h2>
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-500/40 to-transparent ml-4 dark:via-blue-600/30"></div>
+              </div>
+              <div className="mb-6">
+                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
+                  Tìm câu trả lời cho những thắc mắc phổ biến của khách hàng. 
+                  Nếu bạn không tìm thấy câu trả lời mong muốn, đừng ngần ngại liên hệ với chúng tôi.
+                </p>
+              </div>
+              <FAQSection faqs={faqs} />
+            </section>
+          )}
 
           {/* Reviews Section */}
           <section className="animate-fade-in-up animation-delay-600" id="reviews">

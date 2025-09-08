@@ -1,21 +1,25 @@
+lỗi 
 
 
-![📢](https://static.xx.fbcdn.net/images/emoji.php/v9/t39/1/16/1f4e2.png) Deal hời tháng 9 chỉ có tại NHÀ 24h coffee!
+## Error Type
 
-Chào mừng năm học mới, NHÀ tung 2 deal “chất hơn deadline” dành riêng cho hội học sinh - sinh viên
+Runtime ReferenceError
 
-.
+## Error Message
 
-![✨](https://static.xx.fbcdn.net/images/emoji.php/v9/tf4/1/16/2728.png) []()Deal 1 – no bụng, sáng đầu: áp dụng khung giờ 0-12h sáng
+faqs is not defined
 
-![🥣](https://static.xx.fbcdn.net/images/emoji.php/v9/tce/1/16/1f963.png) 1 mì nóng + 1 ly nước bất kỳ CHỈ VỚI 55k
+    at Home (src/app/(site)/page.tsx:66:13)
 
-![✨](https://static.xx.fbcdn.net/images/emoji.php/v9/tf4/1/16/2728.png) Deal 2 – học càng lâu,  nước càng rẻ
+## Code Frame
 
-![🥤](https://static.xx.fbcdn.net/images/emoji.php/v9/t4f/1/16/1f964.png) Với hóa đơn trên 3 tiếng, khách iu sẽ được mua ngay 1 ly Hồng trà hạt chia CHỈ CÒN 19k
+  64 |
+  65 |           {/* FAQ Section */}
 
-.
+> 66 |           {(faqs?.items ?? []).length > 0 && (
+> |             ^
+> 67 |             `<section className="animate-fade-in-up animation-delay-400" id="faq">`
+> 68 |               `<div className="mb-8 flex items-center justify-between">`
+> 69 |                 `<h2 className="text-3xl font-bold text-gray-900 dark:text-white">`Câu Hỏi Thường Gặp`</h2>`
 
-Deal bắt đầu từ ngày mai 8/9/2025 và chưa có dấu hiệu sẽ kết thúc
-
-![📚](https://static.xx.fbcdn.net/images/emoji.php/v9/t49/1/16/1f4da.png) Deadline căng cứ để đó, đồ uống đã có NHÀ lo!
+Next.js version: 15.5.0 (Turbopack)

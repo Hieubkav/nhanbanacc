@@ -75,7 +75,7 @@ export function EntityCard({
         }
       }}
     >
-      <Card className="group relative h-full w-full cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white/80 transition-all duration-300 hover:border-gold/60 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800/80 dark:hover:bg-gray-800 pt-0">
+            <Card className="group relative h-full w-full cursor-pointer overflow-hidden rounded-xl rounded-b-md border border-gray-200 bg-white/80 transition-all duration-300 hover:border-gold/60 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800/80 dark:hover:bg-gray-800 pt-0 pb-0 flex flex-col">
         {/* Hình ảnh */}
         {images && images.length > 0 && images[0] && images[0] !== "undefined" ? (
           <div className="relative overflow-hidden">
@@ -98,9 +98,9 @@ export function EntityCard({
           <div className="h-48 w-full bg-gray-200 dark:bg-gray-700" />
         )}
 
-        <div className="p-5">
+        <div className="flex-1 flex flex-col p-3">
           <div className="flex items-start justify-between gap-3">
-            <h3 className="line-clamp-2 text-lg font-semibold leading-snug tracking-tight text-gray-900 dark:text-white">
+            <h3 className="line-clamp-2 text-base font-semibold leading-snug tracking-tight text-gray-900 dark:text-white">
               {title}
             </h3>
             {badge ? (
@@ -110,64 +110,28 @@ export function EntityCard({
             ) : null}
           </div>
 
-          {description ? (
-            <p className="mt-3 line-clamp-3 text-sm text-muted-foreground dark:text-gray-300">{description}</p>
-          ) : null}
-
-          {(onClick || safeExternalUrl) ? (
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              {onClick ? (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="rounded-full"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onClick?.();
-                  }}
-                  aria-label="Xem thông tin"
-                >
-                  <Eye className="mr-2 h-4 w-4" /> Xem thông tin
-                </Button>
-              ) : null}
-              {safeExternalUrl ? (
-                <Button asChild size="sm" variant="outline" className="rounded-full">
-                  <a
-                    href={safeExternalUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    aria-label="Mở trong tab mới"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" /> Mở trong tab mới
-                  </a>
-                </Button>
-              ) : null}
-            </div>
-          ) : null}
-
           {/* Giá sản phẩm */}
-          <div className="mt-3">
+          <div className="mt-2">
             {lowestPrice !== undefined ? (
               <div className="flex items-center">
                 {lowestOriginalPrice && lowestOriginalPrice > lowestPrice ? (
                   <>
-                    <span className="text-lg font-bold text-red-600 dark:text-red-400">Từ {formatPrice(lowestPrice)}</span>
-                    <span className="ml-2 text-sm text-gray-500 line-through dark:text-gray-400">
+                    <span className="text-base font-bold text-red-600 dark:text-red-400">Từ {formatPrice(lowestPrice)}</span>
+                    <span className="ml-2 text-xs text-gray-500 line-through dark:text-gray-400">
                       {formatPrice(lowestOriginalPrice)}
                     </span>
                   </>
                 ) : (
-                  <span className="text-lg font-bold text-gray-900 dark:text-white">Từ {formatPrice(lowestPrice)}</span>
+                  <span className="text-base font-bold text-gray-900 dark:text-white">Từ {formatPrice(lowestPrice)}</span>
                 )}
               </div>
             ) : (
-              <span className="text-lg font-bold text-gray-900 dark:text-white">Liên hệ</span>
+              <span className="text-base font-bold text-gray-900 dark:text-white">Liên hệ</span>
             )}
           </div>
 
           {/* Thông tin tồn kho */}
-          <div className="mt-2 text-sm">
+          <div className="mt-1 text-xs">
             {inStock !== undefined ? (
               inStock ? (
                 <span className="text-green-600 dark:text-green-400">
@@ -178,10 +142,29 @@ export function EntityCard({
               )
             ) : null}
           </div>
+
+          <div className="flex-1"></div>
         </div>
 
+        {/* Nút chi tiết tràn viền dưới */}
+        {(onClick || safeExternalUrl) ? (
+          <div className="-mx-px -mb-px">
+            <Button
+              size="lg"
+              className="w-full h-12 rounded-none rounded-b-md bg-yellow-500 hover:bg-yellow-600 text-white border-t border-gray-200 dark:border-gray-700 text-[1.3em] font-semibold"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClick?.();
+              }}
+              aria-label="Chi tiết"
+            >
+              <Eye className="mr-2 h-4 w-4" /> Chi tiết
+            </Button>
+          </div>
+        ) : null}
+
         {/* Overlay hiệu ứng hover: không chặn click */}
-        <div className="pointer-events-none absolute inset-0 rounded-xl border-2 border-transparent transition-all duration-300 group-hover:border-gold/30" />
+        <div className="pointer-events-none absolute inset-0 rounded-xl rounded-b-md border-2 border-transparent transition-all duration-300 group-hover:border-gold/30" />
       </Card>
     </div>
   );
@@ -194,4 +177,3 @@ function formatPrice(price: number): string {
     currency: "VND",
   }).format(price);
 }
-
