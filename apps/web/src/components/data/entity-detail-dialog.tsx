@@ -6,7 +6,7 @@ import { api } from "@nhanbanacc/backend/convex/_generated/api";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, CheckCircle2, Tag, CalendarClock, X } from "lucide-react";
+import { Star, CheckCircle2, Tag, CalendarClock, X, Facebook } from "lucide-react";
 import { StorageImage } from "@/components/shared/storage-image";
 import SafeHtml from "@/components/shared/safe-html";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -81,14 +81,6 @@ function ProductDetail({ id }: { id: string }) {
       {activeImageId ? (
         <div className="relative mt-2 h-56 w-full overflow-hidden rounded-xl sm:h-64 md:h-72">
           <StorageImage imageId={activeImageId} alt={title} fit="contain" className="bg-white dark:bg-gray-900" />
-          {priceStats ? (
-            <div className="absolute bottom-2 left-2 rounded-full bg-black/60 px-3 py-1 text-xs text-white backdrop-blur">
-              Tu {formatPrice(priceStats.minPrice)}
-              {priceStats.minOriginal ? (
-                <span className="ml-2 opacity-80 line-through">{formatPrice(priceStats.minOriginal)}</span>
-              ) : null}
-            </div>
-          ) : null}
         </div>
       ) : null}
 
@@ -162,8 +154,37 @@ function ProductDetail({ id }: { id: string }) {
           ) : (
             <p className="text-sm text-muted-foreground">Chua co bien the nao.</p>
           )}
-        </div>
+       </div>
       </section>
+
+      {/* CTA mạng xã hội dưới danh sách biến thể - nổi bật, nhiều điểm nhấn */}
+      {(settings?.socialFacebook || settings?.socialZalo) ? (
+        <div className="mt-5 flex flex-wrap gap-3">
+          {settings?.socialFacebook ? (
+            <Button
+              asChild
+              size="lg"
+              className="w-full sm:w-auto rounded-full px-6 h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all bg-[#F97316] hover:bg-[#EA580C] text-white ring-2 ring-[#F97316]/40"
+            >
+              <a href={settings.socialFacebook} target="_blank" rel="noopener noreferrer" aria-label="Liên hệ Facebook để mua">
+                <Facebook className="mr-2 h-5 w-5" /> Liên hệ Facebook để mua
+              </a>
+            </Button>
+          ) : null}
+          {settings?.socialZalo ? (
+            <Button
+              asChild
+              size="lg"
+              className="w-full sm:w-auto rounded-full px-6 h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all bg-[#0068FF] hover:bg-[#0058D6] text-white ring-2 ring-[#0068FF]/40"
+            >
+              <a href={settings.socialZalo} target="_blank" rel="noopener noreferrer" aria-label="Liên hệ Zalo để mua">
+                <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded bg-white/15 text-white font-bold">Z</span>
+                Liên hệ Zalo để mua
+              </a>
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
 
       <Separator className="my-4" />
 
