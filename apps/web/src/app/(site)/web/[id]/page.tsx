@@ -9,17 +9,33 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { StorageImage } from "@/components/shared/storage-image";
+import { MessageCircle } from "lucide-react";
 
 export default function WebDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const raw = String(id);
+  const extractedId = raw.includes("-") ? (raw.split("-").pop() as string) : raw;
 
-  const data = useQuery(api.service_websites.getById, { id: id as any });
-  const pics = useQuery(api.service_website_images.listByServiceWebsite, { serviceWebsiteId: id as any, sort: { field: "sortOrder", direction: "asc" }, pageSize: 20 } as any);
+  const data = useQuery(api.service_websites.getById, { id: extractedId as any });
+  const pics = useQuery(api.service_website_images.listByServiceWebsite, { serviceWebsiteId: extractedId as any, sort: { field: "sortOrder", direction: "asc" }, pageSize: 20 } as any);
+  const settings = useQuery(api.settings.getOne);
 
   const title = (data as any)?.title ?? "Đang tải...";
   const summary = (data as any)?.summary ?? "";
   const description = (data as any)?.description ?? "";
   const firstImageId = pics?.items?.[0]?.imageId ? String(pics.items[0].imageId) : undefined;
+  const zaloLink = (() => {
+    const s: any = settings || {};
+    const direct = s?.socialZalo || s?.zalo || s?.contactZalo || s?.zaloUrl;
+    if (direct) return String(direct);
+    const phone = s?.zaloPhone || s?.contactPhone || s?.phone || s?.hotline;
+    if (phone) {
+      const digits = String(phone).replace(/[^0-9]/g, "");
+      if (digits) return `https://zalo.me/${digits}`;
+    }
+    return undefined;
+  })();
+  const facebookLink = (settings as any)?.socialFacebook as string | undefined;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8">

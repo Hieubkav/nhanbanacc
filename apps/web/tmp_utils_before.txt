@@ -7,13 +7,11 @@ export function cn(...inputs: ClassValue[]) {
 
 export function slugify(input: string) {
   if (!input) return "";
-  // Vietnamese specific: replace uppercase Đ with D before lowercasing
-  let s = input.replace(/Đ/g, "D");
-  s = s
+  let s = input
     .toLowerCase()
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "");
-  // Vietnamese specific: replace lowercase đ with d after lowercasing
+  // Vietnamese specific
   s = s.replace(/đ/g, "d");
   // Replace non-alphanumeric with hyphen
   s = s.replace(/[^a-z0-9]+/g, "-");
@@ -23,4 +21,3 @@ export function slugify(input: string) {
   s = s.replace(/-+/g, "-");
   return s;
 }
-

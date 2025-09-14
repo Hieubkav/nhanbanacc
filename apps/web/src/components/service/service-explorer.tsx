@@ -6,6 +6,7 @@ import { api } from "@nhanbanacc/backend/convex/_generated/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { EntityCardGrid } from "@/components/data/entity-card-grid";
+import { slugify } from "@/lib/utils";
 import { SearchIcon, Sparkles } from "lucide-react";
 
 type SortKey = "title_asc" | "title_desc" | "updated_desc" | "updated_asc" | "sortOrder_asc";
@@ -111,7 +112,11 @@ export default function ServiceExplorer({ onOpenDetail }: { onOpenDetail: (id: s
         getVariants={(s: any) => (s.isPriceVisible && s.price ? [{ price: s.price }] : undefined)}
         getImages={(s: any) => s.images}
         getExternalUrl={(s: any) => s.websiteUrl}
-        onItemClick={(s: any) => onOpenDetail(String(s._id))}
+        onItemClick={(s: any) => {
+          const base = s?.title ? slugify(String(s.title)) : undefined;
+          const slugOrId = base ? `${base}-${String(s._id)}` : String(s._id);
+          onOpenDetail(slugOrId);
+        }}
       />
 
       <div className="mt-8 flex justify-center">

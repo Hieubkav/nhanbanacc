@@ -6,6 +6,7 @@ import { api } from "@nhanbanacc/backend/convex/_generated/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { EntityCardGrid } from "@/components/data/entity-card-grid";
+import { slugify } from "@/lib/utils";
 import { SearchIcon } from "lucide-react";
 
 export default function PostExplorer({ onOpenDetail }: { onOpenDetail: (id: string) => void }) {
@@ -70,7 +71,11 @@ export default function PostExplorer({ onOpenDetail }: { onOpenDetail: (id: stri
         // Ẩn badge "published" cho sạch sẽ
         getBadge={(p: any) => (p.status && String(p.status) !== "published" ? String(p.status) : undefined)}
         getImages={(p: any) => p.images}
-        onItemClick={(p: any) => onOpenDetail(String(p._id))}
+        onItemClick={(p: any) => {
+          const base = p?.title ? slugify(String(p.title)) : undefined;
+          const slugOrId = base ? `${base}-${String(p._id)}` : String(p._id);
+          onOpenDetail(slugOrId);
+        }}
       />
       
       <div className="mt-8 flex justify-center">

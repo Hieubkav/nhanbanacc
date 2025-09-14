@@ -11,8 +11,10 @@ import { StorageImage } from "@/components/shared/storage-image";
 
 export default function BaiVietDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const data = useQuery(api.posts.getById, { id: id as any });
-  const pics = useQuery(api.post_images.listByPost, { postId: id as any, sort: { field: "sortOrder", direction: "asc" }, pageSize: 20 } as any);
+  const raw = String(id);
+  const extractedId = raw.includes("-") ? (raw.split("-").pop() as string) : raw;
+  const data = useQuery(api.posts.getById, { id: extractedId as any });
+  const pics = useQuery(api.post_images.listByPost, { postId: extractedId as any, sort: { field: "sortOrder", direction: "asc" }, pageSize: 20 } as any);
 
   const title = (data as any)?.title ?? "Đang tải...";
   const excerpt = (data as any)?.excerpt ?? "";
