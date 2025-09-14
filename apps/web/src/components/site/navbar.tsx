@@ -49,7 +49,6 @@ export default function Navbar() {
           <NavLink href="/bai-viet" active={pathname?.startsWith("/bai-viet")}>
             Bài viết
           </NavLink>
-          <NavLink href="/#faq">Hỗ trợ</NavLink>
         </nav>
 
         {/* Right actions */}
@@ -92,9 +91,6 @@ export default function Navbar() {
                 <MobileItem href="/bai-viet" onNavigate={() => setOpen(false)}>
                   Bài viết
                 </MobileItem>
-                <MobileItem href="/#faq" onNavigate={() => setOpen(false)}>
-                  Hỗ trợ
-                </MobileItem>
               </div>
 
               <div className="mt-auto p-3">
@@ -134,3 +130,4 @@ function MobileItem({ href, onNavigate, children }: { href: string; onNavigate?:
     </Link>
   );
 }
+

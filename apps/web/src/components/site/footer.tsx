@@ -12,7 +12,7 @@ export default function Footer() {
         {/* Brand + contact */}
         <div className="md:col-span-1">
           <div className="mb-3 text-2xl font-bold">{s?.siteName ?? "NhanBanACC"}</div>
-          <p className="mb-6 text-gray-300">{s?.slogan ?? "Giai phap nhanh, gon, hieu qua"}</p>
+          <p className="mb-6 text-gray-300">{s?.slogan ?? "Giải pháp nhanh, gọn, hiệu quả"}</p>
           <div className="space-y-3">
             {s?.address ? (
               <div className="flex items-start gap-3">
@@ -35,21 +35,21 @@ export default function Footer() {
 
         {/* Quick links */}
         <div className="md:col-span-1">
-          <h3 className="mb-6 text-xl font-semibold">Liên kết</h3>
+          <h3 className="mb-6 text-xl font-semibold">Điều hướng</h3>
           <ul className="space-y-3">
             <li>
-              <a href="#products" className="text-gray-300 transition-colors hover:text-gold">
+              <a href="/web" className="text-gray-300 transition-colors hover:text-gold">
+                Làm web
+              </a>
+            </li>
+            <li>
+              <a href="/san-pham" className="text-gray-300 transition-colors hover:text-gold">
                 Sản phẩm
               </a>
             </li>
             <li>
-              <a href="#posts" className="text-gray-300 transition-colors hover:text-gold">
+              <a href="/bai-viet" className="text-gray-300 transition-colors hover:text-gold">
                 Bài viết
-              </a>
-            </li>
-            <li>
-              <a href="#faq" className="text-gray-300 transition-colors hover:text-gold">
-                Câu hỏi thường gặp
               </a>
             </li>
           </ul>
@@ -106,10 +106,9 @@ export default function Footer() {
 
       <div className="border-t border-gray-700">
         <div className="container mx-auto px-4 py-6 text-center text-sm text-gray-400">
-           {new Date().getFullYear()} {s?.siteName ?? "NhanBanACC"}. Được code bởi Điền Trân.
+           {new Date().getFullYear()} {s?.siteName ?? "NhanBanACC"}. Được code bởi Điền Trần.
         </div>
       </div>
     </footer>
   );
 }
-
