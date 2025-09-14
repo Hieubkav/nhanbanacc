@@ -12,6 +12,24 @@ export const list = query({ args: listArgsValidator, handler: async (ctx, args) 
 
 export const listByPost = query({ args: { postId: v.id("posts"), ...listArgsValidator }, handler: async (ctx, args) => { const docs = await ctx.db.query(TABLE).filter((q) => q.eq(q.field("postId"), args.postId)).collect(); let items = docs; items = applyFilters(items, args.filters); items = applySort(items, args.sort ?? { field: "sortOrder", direction: "asc" }); return paginate(items, args.page, args.pageSize, args.cursor); } });
 
+// Lấy theo danh sách postIds để tối ưu cho grid
+export const listByPostIds = query({
+  args: { postIds: v.array(v.id("posts")), ...listArgsValidator },
+  handler: async (ctx, args) => {
+    if (args.postIds.length === 0) {
+      return { items: [], cursor: null, hasMore: false };
+    }
+    const docs = await ctx.db
+      .query(TABLE)
+      .filter((q) => q.or(...args.postIds.map((id) => q.eq(q.field("postId"), id))))
+      .collect();
+    let items = docs;
+    items = applyFilters(items, args.filters);
+    items = applySort(items, args.sort ?? { field: "sortOrder", direction: "asc" });
+    return paginate(items, args.page, args.pageSize, args.cursor);
+  },
+});
+
 export const listByImage = query({ args: { imageId: v.id("images"), ...listArgsValidator }, handler: async (ctx, args) => { const docs = await ctx.db.query(TABLE).filter((q) => q.eq(q.field("imageId"), args.imageId)).collect(); let items = docs; items = applyFilters(items, args.filters); items = applySort(items, args.sort ?? { field: "sortOrder", direction: "asc" }); return paginate(items, args.page, args.pageSize, args.cursor); } });
 
 export const exists = query({ args: { field: v.string(), value: v.any(), excludeId: v.optional(v.id(TABLE)) }, handler: async (ctx, { field, value, excludeId }) => ({ exists: !!(await findByField(ctx, TABLE, field, value, excludeId)) }) });
@@ -28,4 +46,3 @@ export const publish = mutation({ args: { id: v.id(TABLE) }, handler: async () =
 export const unpublish = mutation({ args: { id: v.id(TABLE) }, handler: async () => { throw new Error("post_images không có status"); } });
 export const clone = mutation({ args: { id: v.id(TABLE), overrides: v.optional(v.object({ postId: v.optional(v.id("posts")), imageId: v.optional(v.id("images")), sortOrder: v.optional(v.number()) })) }, handler: async (ctx, { id, overrides }) => { const src = await ctx.db.get(id); if (!src) throw new Error("Không tìm thấy bản ghi để clone"); const dto = { postId: overrides?.postId ?? src.postId, imageId: overrides?.imageId ?? src.imageId, sortOrder: overrides?.sortOrder ?? src.sortOrder, createdAt: now() } as any; const newId = await ctx.db.insert(TABLE, dto); return ctx.db.get(newId); } });
 export const upsert = mutation({ args: { where: v.object({ field: v.string(), value: v.any() }), create: v.object({ postId: v.id("posts"), imageId: v.id("images"), sortOrder: v.number() }), update: v.object({ postId: v.optional(v.id("posts")), imageId: v.optional(v.id("images")), sortOrder: v.optional(v.number()) }) }, handler: async (ctx, { where, create, update }) => { const found = await findByField(ctx, TABLE, where.field, where.value); if (!found) { const id = await ctx.db.insert(TABLE, { ...create, createdAt: now() }); return ctx.db.get(id); } await ctx.db.patch(found._id, update as any); return ctx.db.get(found._id); } });
-

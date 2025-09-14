@@ -56,7 +56,10 @@ export default function Home() {
                 Triển khai website nhanh, đẹp, tối ưu SEO. Xem mẫu đã làm và liên hệ tư vấn ngay.
               </p>
             </div>
-            <ServiceExplorer onOpenDetail={(id) => router.push(`/web/${id}`)} />
+            {/* Chỉ render khi tới viewport để giảm tải lần đầu */}
+            <LazySection>
+              <ServiceExplorer onOpenDetail={(id) => router.push(`/web/${id}`)} />
+            </LazySection>
           </section>
 
           {/* Posts Section */}
@@ -65,7 +68,9 @@ export default function Home() {
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Bài Viết Mới Nhất</h2>
               <div className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-500/40 to-transparent ml-4 dark:via-blue-600/30"></div>
             </div>
-            <PostExplorer onOpenDetail={(id) => router.push(`/bai-viet/${id}`)} />
+            <LazySection>
+              <PostExplorer onOpenDetail={(id) => router.push(`/bai-viet/${id}`)} />
+            </LazySection>
           </section>
 
           {/* FAQ Section */}
@@ -87,7 +92,9 @@ export default function Home() {
 
           {/* Reviews Section */}
           <section className="animate-fade-in-up animation-delay-600" id="reviews">
-            <ReviewsSection />
+            <LazySection>
+              <ReviewsSection />
+            </LazySection>
           </section>
         </div>
       </div>
@@ -115,4 +122,26 @@ export default function Home() {
       <SpeedDial onOpenSearch={() => setSearchOpen(true)} />
     </div>
   );
+}
+
+// Render con khi vào viewport để giảm tải initial render
+function LazySection({ children }: { children: React.ReactNode }) {
+  const [visible, setVisible] = useState(false);
+  const ref = (node: HTMLElement | null) => {
+    if (!node) return;
+    // Nếu đã render rồi thì bỏ qua
+    if (visible) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first && first.isIntersecting) {
+          setVisible(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: '200px 0px' }
+    );
+    io.observe(node);
+  };
+  return <div ref={ref as any}>{visible ? children : null}</div>;
 }

@@ -165,7 +165,7 @@ export function EntityCard({
 
         {/* Nút chi tiết tràn viền dưới */}
         {(onClick || safeExternalUrl) ? (
-          <div className="-mx-px -mb-px">
+          <div>
             <Button
               size="lg"
               className="w-full h-12 rounded-none rounded-b-md bg-yellow-500 hover:bg-yellow-600 text-white border-t border-gray-200 dark:border-gray-700 text-[1.3em] font-semibold"

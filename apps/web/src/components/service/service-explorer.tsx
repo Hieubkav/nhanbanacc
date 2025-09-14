@@ -35,7 +35,7 @@ export default function ServiceExplorer({ onOpenDetail }: { onOpenDetail: (id: s
     q: q.trim() || undefined,
     sort: sortMap as any,
     page,
-    pageSize: 24,
+    pageSize: 12,
   } as any);
 
   // Merge items across pages
@@ -54,26 +54,29 @@ export default function ServiceExplorer({ onOpenDetail }: { onOpenDetail: (id: s
     });
   }, [list?.items]);
 
-  // Fetch all service_website_images and images; join on client similar to products
-  const swiList = useQuery(api.service_website_images.list, { pageSize: 1000 } as any);
-  const imagesList = useQuery(api.images.list, { pageSize: 1000 } as any);
+  // Chỉ lấy liên kết ảnh theo danh sách serviceWebsiteIds hiện có
+  const serviceWebsiteIds = useMemo(() => {
+    const items = (merged.length ? merged : list?.items) ?? [];
+    return items.map((s: any) => s._id).filter(Boolean);
+  }, [merged, list?.items]);
+  const swiList = useQuery((api as any).service_website_images.listByServiceWebsiteIds, {
+    serviceWebsiteIds: (serviceWebsiteIds as any) ?? [],
+    sort: { field: "sortOrder", direction: "asc" },
+    pageSize: 500,
+  } as any);
 
   const servicesWithDetails = useMemo(() => {
     if (!list?.items) return [];
     const items = merged.length ? merged : list.items;
+    const links = (swiList?.items ?? []) as any[];
     return items.map((svc: any) => {
-      const links = (swiList?.items || []).filter((x: any) => String(x.serviceWebsiteId) === String(svc._id));
-      const imgs = links
-        .map((lnk: any) => {
-          const img = (imagesList?.items || []).find((im: any) => String(im._id) === String(lnk.imageId));
-          return img ? { ...img, sortOrder: lnk.sortOrder } : null;
-        })
-        .filter(Boolean)
+      const svcLinks = links
+        .filter((x: any) => String(x.serviceWebsiteId) === String(svc._id))
         .sort((a: any, b: any) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
-      const imageIds = imgs.map((im: any) => String(im._id)).filter((id: string) => id && id !== "undefined");
+      const imageIds = svcLinks.map((x: any) => String(x.imageId)).filter((id: string) => id && id !== "undefined");
       return { ...svc, images: imageIds.length ? imageIds : undefined };
     });
-  }, [list, merged, swiList, imagesList]);
+  }, [list, merged, swiList?.items]);
 
   return (
     <section className="rounded-2xl border border-gray-200 bg-white/70 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-900/70 dark:border-gray-700">
@@ -133,3 +136,4 @@ export default function ServiceExplorer({ onOpenDetail }: { onOpenDetail: (id: s
     </section>
   );
 }
+

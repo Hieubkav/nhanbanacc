@@ -45,6 +45,24 @@ export const listByServiceWebsite = query({
   },
 });
 
+// Lấy theo danh sách serviceWebsiteIds để tối ưu cho grid
+export const listByServiceWebsiteIds = query({
+  args: { serviceWebsiteIds: v.array(v.id("service_websites")), ...listArgsValidator },
+  handler: async (ctx, args) => {
+    if (args.serviceWebsiteIds.length === 0) {
+      return { items: [], cursor: null, hasMore: false };
+    }
+    const docs = await ctx.db
+      .query(TABLE)
+      .filter((q) => q.or(...args.serviceWebsiteIds.map((id) => q.eq(q.field("serviceWebsiteId"), id))))
+      .collect();
+    let items = docs;
+    items = applyFilters(items, args.filters);
+    items = applySort(items, args.sort ?? { field: "sortOrder", direction: "asc" });
+    return paginate(items, args.page, args.pageSize, args.cursor);
+  },
+});
+
 export const listByImage = query({
   args: { imageId: v.id("images"), ...listArgsValidator },
   handler: async (ctx, args) => {
@@ -141,4 +159,3 @@ export const upsert = mutation({
     return ctx.db.get(found._id);
   },
 });
-
