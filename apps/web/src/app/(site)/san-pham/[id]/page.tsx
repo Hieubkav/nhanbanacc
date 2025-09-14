@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, useMemo, useEffect } from "react";
+import { use, useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useQuery } from "convex/react";
@@ -56,11 +56,47 @@ export default function SanPhamDetailPage({ params }: { params: Promise<{ id: st
   const variants = useQuery(api.product_variants.listByFK, { productId, sort: { field: "sortOrder", direction: "asc" }, pageSize: 100 });
   const reviews = useQuery(api.reviews.listByProduct, { productId, pageSize: 50 });
   const settings = useQuery(api.settings.getOne);
-  // related products by same category
-  const related = useQuery(
-    api.products.listByFK,
-    data ? ({ categoryId: data.categoryId, sort: { field: "sortOrder", direction: "asc" }, pageSize: 8 } as any) : undefined as any,
+  // related products = all others (site has few products)
+  const relatedAll = useQuery(api.products.list, { pageSize: 1000, sort: { field: "sortOrder", direction: "asc" } } as any);
+  const relatedItems = useMemo(() => {
+    const all = relatedAll?.items ?? [];
+    const filtered = all.filter((p: any) => String(p._id) !== String(productId));
+    return filtered.slice(0, 8);
+  }, [relatedAll?.items, productId]);
+
+  // Fetch product images and image docs to show thumbnails for related
+  const allProductImages = useQuery(api.product_images.list, { pageSize: 1000 } as any);
+  const allImages = useQuery(api.images.list, { pageSize: 1000 } as any);
+
+  // Fetch variants for related items to show price (min price)
+  const relatedIds = useMemo(() => relatedItems.map((p: any) => p._id), [relatedItems]);
+  const relatedVariants = useQuery(
+    api.product_variants.listByProductIds,
+    { productIds: (relatedIds as any) ?? [], pageSize: 1000 } as any
   );
+  const minPriceByProductId = useMemo(() => {
+    const map: Record<string, { price?: number; originalPrice?: number }> = {};
+    for (const v of (relatedVariants?.items ?? []) as any[]) {
+      const key = String(v.productId);
+      const cur = map[key];
+      if (!cur || (typeof v.price === 'number' && v.price < (cur.price ?? Number.POSITIVE_INFINITY))) {
+        map[key] = { price: v.price, originalPrice: v.originalPrice };
+      }
+    }
+    return map;
+  }, [relatedVariants?.items]);
+  const firstImageIdByProductId = useMemo(() => {
+    const map: Record<string, string | undefined> = {};
+    const links = (allProductImages?.items ?? []) as any[];
+    const imgs = (allImages?.items ?? []) as any[];
+    for (const link of links) {
+      const pid = String(link.productId);
+      const candidate = imgs.find((img: any) => String(img._id) === String(link.imageId));
+      if (!candidate) continue;
+      if (!map[pid]) map[pid] = String(candidate._id);
+    }
+    return map;
+  }, [allProductImages?.items, allImages?.items]);
   
   // Build Zalo link from settings for reuse
   const zaloLink = useMemo(() => {
@@ -115,6 +151,30 @@ export default function SanPhamDetailPage({ params }: { params: Promise<{ id: st
   const displayPrice = selectedVariant?.price;
   const displayOriginalPrice = selectedVariant?.originalPrice;
 
+  // Small beep to notify when page ready (per request)
+  const didBeepRef = useRef(false);
+  useEffect(() => {
+    const ready = data !== undefined && data !== null;
+    if (!ready) return;
+    if (didBeepRef.current) return;
+    try {
+      const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(880, ctx.currentTime);
+      g.gain.setValueAtTime(0.001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.1, ctx.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+      o.connect(g).connect(ctx.destination);
+      o.start();
+      o.stop(ctx.currentTime + 0.2);
+      didBeepRef.current = true;
+    } catch {}
+  }, [data]);
+
   if (data === undefined) {
     return <ProductDetailSkeleton />;
   }
@@ -151,21 +211,30 @@ export default function SanPhamDetailPage({ params }: { params: Promise<{ id: st
 
         <ProductTabs data={data} reviews={reviews?.items} />
 
-        {related?.items?.filter((p: any) => String(p._id) !== String(productId))?.length ? (
+        {relatedItems?.length ? (
           <section className="mt-16 lg:mt-24">
             <h2 className="mb-6 text-2xl font-bold tracking-tight">Sản phẩm tương tự</h2>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {related.items
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {relatedItems
                 .filter((p: any) => String(p._id) !== String(productId))
                 .map((p: any) => (
                   <Card key={String(p._id)} className="h-full overflow-hidden rounded-xl">
-                    <CardHeader className="pb-2">
-                      <h3 className="line-clamp-2 text-base font-semibold">{p.name}</h3>
+                    <CardContent className="p-0">
+                      <div className="relative aspect-square w-full overflow-hidden bg-white dark:bg-slate-900">
+                        {firstImageIdByProductId[String(p._id)] ? (
+                          <StorageImage imageId={firstImageIdByProductId[String(p._id)]} alt={p.name} fit="cover" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-muted-foreground">No image</div>
+                        )}
+                      </div>
+                    </CardContent>
+                    <CardHeader className="pb-1 pt-3 px-4">
+                      <h3 className="line-clamp-2 text-sm font-semibold">{p.name}</h3>
                     </CardHeader>
-                    <CardContent className="pt-0 text-sm text-muted-foreground">
+                    <CardContent className="pt-0 pb-3 px-4 text-xs text-muted-foreground">
                       {p.shortDesc ? <p className="line-clamp-3">{p.shortDesc}</p> : <span className="opacity-60">Không có mô tả</span>}
                     </CardContent>
-                    <CardFooter className="pt-2">
+                    <CardFooter className="pt-0 px-4 pb-4">
                       <Button asChild size="sm" className="w-full">
                         <Link href={`/san-pham/${p.slug}-${p._id}`}>
                           <Tag className="mr-2 h-4 w-4" /> Xem chi tiết
@@ -210,7 +279,7 @@ function ImageGallery({ productTitle, images, selectedImageId, setSelectedImageI
   };
 
   return (
-    <div className="flex flex-col gap-4 sticky top-24 self-start">
+    <div className="flex flex-col gap-4 md:sticky md:top-24 md:self-start">
       <div className="overflow-hidden rounded-xl border shadow-sm">
         <AnimatePresence mode="wait">
           <motion.div
@@ -230,7 +299,7 @@ function ImageGallery({ productTitle, images, selectedImageId, setSelectedImageI
         </AnimatePresence>
       </div>
       {images && images.length > 1 && (
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-4 gap-3 sm:grid-cols-5">
           {images.map((p: any) => (
             <motion.button
               key={String(p._id)}
