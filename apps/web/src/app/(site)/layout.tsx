@@ -4,6 +4,7 @@ import "../../index.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Providers from "@/components/providers";
 import Navbar from "@/components/site/navbar";
+import Footer from "@/components/site/footer";
 import DynamicHead from "@/components/site/dynamic-head";
 import SeoJsonLd from "@/components/site/seo-jsonld";
 
@@ -78,6 +79,7 @@ export default function SiteLayout({
               <SeoJsonLd />
               <Navbar />
               <main className="flex-1">{children}</main>
+              <Footer />
             </div>
           </Providers>
         </ClerkProvider>

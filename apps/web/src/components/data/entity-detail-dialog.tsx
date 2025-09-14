@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@nhanbanacc/backend/convex/_generated/api";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, CheckCircle2, Tag, CalendarClock, X, Facebook } from "lucide-react";
@@ -16,7 +16,7 @@ import { Separator } from "@/components/ui/separator";
 
 type Kind = "product" | "post" | "service";
 
-function ProductDetail({ id }: { id: string }) {
+export function ProductDetail({ id }: { id: string }) {
   const data = useQuery(api.products.getById, { id: id as any });
   const pics = useQuery(api.product_images.listByProduct, {
     productId: id as any,
@@ -70,12 +70,14 @@ function ProductDetail({ id }: { id: string }) {
 
   return (
     <>
-      <DialogHeader>
-        <DialogTitle className="flex items-center gap-2 text-zinc-900">
+      <header className="mb-2">
+        <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight text-zinc-900 dark:text-zinc-100">
           {title || (data === undefined ? "Dang tai..." : "Khong tim thay")}
-        </DialogTitle>
-        {shortDesc ? <DialogDescription>{shortDesc}</DialogDescription> : null}
-      </DialogHeader>
+        </h2>
+        {shortDesc ? (
+          <p className="text-sm text-muted-foreground mt-1">{shortDesc}</p>
+        ) : null}
+      </header>
 
       {activeImageId ? (
         <div className="relative mt-2 h-56 w-full overflow-hidden rounded-xl sm:h-64 md:h-72">
@@ -230,7 +232,7 @@ function ProductDetail({ id }: { id: string }) {
   );
 }
 
-function PostDetail({ id }: { id: string }) {
+export function PostDetail({ id }: { id: string }) {
   const data = useQuery(api.posts.getById, { id: id as any });
   const pics = useQuery(api.post_images.listByPost, {
     postId: id as any,
@@ -268,13 +270,15 @@ function PostDetail({ id }: { id: string }) {
 
   return (
     <>
-      <DialogHeader>
-        <DialogTitle className="flex items-center gap-2 text-zinc-900">
+      <header className="mb-2">
+        <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight text-zinc-900 dark:text-zinc-100">
           {title || (data === undefined ? "Dang tai..." : "Khong tim thay")}
           <Badge variant="secondary">Bai viet</Badge>
-        </DialogTitle>
-        {desc ? <DialogDescription>{desc}</DialogDescription> : null}
-      </DialogHeader>
+        </h2>
+        {desc ? (
+          <p className="text-sm text-muted-foreground mt-1">{desc}</p>
+        ) : null}
+      </header>
       {heroId ? (
         <div className="relative mt-2 h-56 w-full overflow-hidden rounded-xl sm:h-64 md:h-72">
           <StorageImage imageId={heroId} alt={title} />
@@ -448,7 +452,7 @@ function formatPrice(n: number) {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(n);
 }
 
-function ServiceDetail({ id }: { id: string }) {
+export function ServiceDetail({ id }: { id: string }) {
   const data = useQuery(api.service_websites.getById, { id: id as any });
   const pics = useQuery(api.service_website_images.listByServiceWebsite, {
     serviceWebsiteId: id as any,
@@ -475,13 +479,15 @@ function ServiceDetail({ id }: { id: string }) {
 
   return (
     <>
-      <DialogHeader>
-        <DialogTitle className="flex items-center gap-2 text-zinc-900">
+      <header className="mb-2">
+        <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight text-zinc-900 dark:text-zinc-100">
           {title || (data === undefined ? "Đang tải..." : "Không tìm thấy")}
           <Badge variant="secondary">Dịch vụ web</Badge>
-        </DialogTitle>
-        {summary ? <DialogDescription>{summary}</DialogDescription> : null}
-      </DialogHeader>
+        </h2>
+        {summary ? (
+          <p className="text-sm text-muted-foreground mt-1">{summary}</p>
+        ) : null}
+      </header>
 
       {firstImageId ? (
         <div className="relative mt-2 h-56 w-full overflow-hidden rounded-xl sm:h-64 md:h-72">

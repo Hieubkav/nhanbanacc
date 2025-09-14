@@ -35,21 +35,21 @@ export default function Footer() {
 
         {/* Quick links */}
         <div className="md:col-span-1">
-          <h3 className="mb-6 text-xl font-semibold">Lien ket nhanh</h3>
+          <h3 className="mb-6 text-xl font-semibold">Liên kết</h3>
           <ul className="space-y-3">
             <li>
               <a href="#products" className="text-gray-300 transition-colors hover:text-gold">
-                San pham
+                Sản phẩm
               </a>
             </li>
             <li>
               <a href="#posts" className="text-gray-300 transition-colors hover:text-gold">
-                Bai viet
+                Bài viết
               </a>
             </li>
             <li>
               <a href="#faq" className="text-gray-300 transition-colors hover:text-gold">
-                Cau hoi thuong gap
+                Câu hỏi thường gặp
               </a>
             </li>
           </ul>
@@ -57,7 +57,7 @@ export default function Footer() {
 
         {/* Socials instead of duplicated address */}
         <div className="md:col-span-1">
-          <h3 className="mb-6 text-xl font-semibold">Ket noi</h3>
+          <h3 className="mb-6 text-xl font-semibold">Kết nối</h3>
           <div className="space-y-3">
             {s?.email ? (
               <a
@@ -106,7 +106,7 @@ export default function Footer() {
 
       <div className="border-t border-gray-700">
         <div className="container mx-auto px-4 py-6 text-center text-sm text-gray-400">
-          c {new Date().getFullYear()} {s?.siteName ?? "NhanBanACC"}. All rights reserved.
+           {new Date().getFullYear()} {s?.siteName ?? "NhanBanACC"}. Được code bởi Điền Trân.
         </div>
       </div>
     </footer>
