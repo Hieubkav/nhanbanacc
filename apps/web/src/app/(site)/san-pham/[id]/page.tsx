@@ -1,8 +1,9 @@
 "use client";
 
-import { use, useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@nhanbanacc/backend/convex/_generated/api";
 import type { Id } from "@nhanbanacc/backend/convex/_generated/dataModel";
@@ -44,8 +45,9 @@ const ZaloIcon = (props: any) => (
 
 
 // Main Component
-export default function SanPhamDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function SanPhamDetailPage() {
+  const params = useParams<{ id: string }>();
+  const id = Array.isArray(params?.id) ? params?.id?.[0] : params?.id;
   const _raw = String(id);
   const _extracted = _raw.includes("-") ? (_raw.split("-").pop() as string) : _raw;
   const productId = _extracted as Id<"products">;
@@ -222,7 +224,7 @@ export default function SanPhamDetailPage({ params }: { params: Promise<{ id: st
                     <CardContent className="p-0">
                       <div className="relative aspect-square w-full overflow-hidden bg-white dark:bg-slate-900">
                         {firstImageIdByProductId[String(p._id)] ? (
-                          <StorageImage imageId={firstImageIdByProductId[String(p._id)]} alt={p.name} fit="cover" />
+                          <StorageImage imageId={(firstImageIdByProductId[String(p._id)] as string)} alt={p.name} fit="cover" />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center text-muted-foreground">No image</div>
                         )}
